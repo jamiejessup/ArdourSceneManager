@@ -1,4 +1,4 @@
-src/src/ASMView.d: ../src/src/ASMView.cpp ../src/src/ASMView.h \
+src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
  /usr/include/gtkmm-3.0/gtkmm/grid.h \
  /usr/include/glibmm-2.4/glibmm/ustring.h \
  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
@@ -735,7 +735,7 @@ src/src/ASMView.d: ../src/src/ASMView.cpp ../src/src/ASMView.h \
  /usr/include/gtkmm-3.0/gtkmm/filefilter.h \
  /usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h \
  /usr/include/gtkmm-3.0/gtkmm/stock.h \
- /usr/include/gtkmm-3.0/gtkmm/stockitem.h ../src/src/Scene/Scene.h \
+ /usr/include/gtkmm-3.0/gtkmm/stockitem.h ../src/Scene/Scene.h \
  /usr/include/libxml2/libxml/parser.h \
  /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
@@ -754,16 +754,13 @@ src/src/ASMView.d: ../src/src/ASMView.cpp ../src/src/ASMView.h \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlmemory.h \
  /usr/include/libxml2/libxml/threads.h \
- ../src/src/Scene/../JackMIDI/jackMIDI.h \
- ../src/src/Scene/../JackMIDI/midi.h ../src/src/Scene/Track/Track.h \
- ../src/src/Scene/Track/../../JackMIDI/jackMIDI.h \
- ../src/src/SceneParser/SceneParser.h \
- ../src/src/SceneParser/../Scene/Scene.h \
- ../src/src/ArdourSessionParser/ArdourSession.h \
- ../src/src/ArdourSessionParser/../Scene/Scene.h \
- ../src/src/JackMIDI/jackMIDI.h
+ ../src/Scene/../JackMIDI/jackMIDI.h ../src/Scene/../JackMIDI/midi.h \
+ ../src/Scene/Track/Track.h ../src/Scene/Track/../../JackMIDI/jackMIDI.h \
+ ../src/SceneParser/SceneParser.h ../src/SceneParser/../Scene/Scene.h \
+ ../src/ArdourSessionParser/ArdourSession.h \
+ ../src/ArdourSessionParser/../Scene/Scene.h ../src/JackMIDI/jackMIDI.h
 
-../src/src/ASMView.h:
+../src/ASMView.h:
 
 /usr/include/gtkmm-3.0/gtkmm/grid.h:
 
@@ -2327,7 +2324,7 @@ src/src/ASMView.d: ../src/src/ASMView.cpp ../src/src/ASMView.h \
 
 /usr/include/gtkmm-3.0/gtkmm/stockitem.h:
 
-../src/src/Scene/Scene.h:
+../src/Scene/Scene.h:
 
 /usr/include/libxml2/libxml/parser.h:
 
@@ -2371,20 +2368,20 @@ src/src/ASMView.d: ../src/src/ASMView.cpp ../src/src/ASMView.h \
 
 /usr/include/libxml2/libxml/threads.h:
 
-../src/src/Scene/../JackMIDI/jackMIDI.h:
+../src/Scene/../JackMIDI/jackMIDI.h:
 
-../src/src/Scene/../JackMIDI/midi.h:
+../src/Scene/../JackMIDI/midi.h:
 
-../src/src/Scene/Track/Track.h:
+../src/Scene/Track/Track.h:
 
-../src/src/Scene/Track/../../JackMIDI/jackMIDI.h:
+../src/Scene/Track/../../JackMIDI/jackMIDI.h:
 
-../src/src/SceneParser/SceneParser.h:
+../src/SceneParser/SceneParser.h:
 
-../src/src/SceneParser/../Scene/Scene.h:
+../src/SceneParser/../Scene/Scene.h:
 
-../src/src/ArdourSessionParser/ArdourSession.h:
+../src/ArdourSessionParser/ArdourSession.h:
 
-../src/src/ArdourSessionParser/../Scene/Scene.h:
+../src/ArdourSessionParser/../Scene/Scene.h:
 
-../src/src/JackMIDI/jackMIDI.h:
+../src/JackMIDI/jackMIDI.h:

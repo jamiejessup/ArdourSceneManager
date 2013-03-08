@@ -1,8 +1,5 @@
-src/src/ArdourSessionParser/ArdourSession.d: \
- ../src/src/ArdourSessionParser/ArdourSession.cpp \
- ../src/src/ArdourSessionParser/ArdourSession.h \
- ../src/src/ArdourSessionParser/../Scene/Scene.h \
- /usr/include/libxml2/libxml/parser.h \
+src/SceneParser/SceneParser.d: ../src/SceneParser/SceneParser.cpp \
+ ../src/SceneParser/SceneParser.h /usr/include/libxml2/libxml/parser.h \
  /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
  /usr/include/libxml2/libxml/tree.h \
@@ -20,14 +17,13 @@ src/src/ArdourSessionParser/ArdourSession.d: \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlmemory.h \
  /usr/include/libxml2/libxml/threads.h \
- ../src/src/ArdourSessionParser/../Scene/../JackMIDI/jackMIDI.h \
- ../src/src/ArdourSessionParser/../Scene/../JackMIDI/midi.h \
- ../src/src/ArdourSessionParser/../Scene/Track/Track.h \
- ../src/src/ArdourSessionParser/../Scene/Track/../../JackMIDI/jackMIDI.h
+ ../src/SceneParser/../Scene/Scene.h \
+ ../src/SceneParser/../Scene/../JackMIDI/jackMIDI.h \
+ ../src/SceneParser/../Scene/../JackMIDI/midi.h \
+ ../src/SceneParser/../Scene/Track/Track.h \
+ ../src/SceneParser/../Scene/Track/../../JackMIDI/jackMIDI.h
 
-../src/src/ArdourSessionParser/ArdourSession.h:
-
-../src/src/ArdourSessionParser/../Scene/Scene.h:
+../src/SceneParser/SceneParser.h:
 
 /usr/include/libxml2/libxml/parser.h:
 
@@ -71,10 +67,12 @@ src/src/ArdourSessionParser/ArdourSession.d: \
 
 /usr/include/libxml2/libxml/threads.h:
 
-../src/src/ArdourSessionParser/../Scene/../JackMIDI/jackMIDI.h:
+../src/SceneParser/../Scene/Scene.h:
 
-../src/src/ArdourSessionParser/../Scene/../JackMIDI/midi.h:
+../src/SceneParser/../Scene/../JackMIDI/jackMIDI.h:
 
-../src/src/ArdourSessionParser/../Scene/Track/Track.h:
+../src/SceneParser/../Scene/../JackMIDI/midi.h:
 
-../src/src/ArdourSessionParser/../Scene/Track/../../JackMIDI/jackMIDI.h:
+../src/SceneParser/../Scene/Track/Track.h:
+
+../src/SceneParser/../Scene/Track/../../JackMIDI/jackMIDI.h:

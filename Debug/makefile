@@ -8,12 +8,12 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include src/src/SceneParser/subdir.mk
--include src/src/Scene/Track/subdir.mk
--include src/src/Scene/subdir.mk
--include src/src/JackMIDI/subdir.mk
--include src/src/ArdourSessionParser/subdir.mk
--include src/src/subdir.mk
+-include src/SceneParser/subdir.mk
+-include src/Scene/Track/subdir.mk
+-include src/Scene/subdir.mk
+-include src/JackMIDI/subdir.mk
+-include src/ArdourSessionParser/subdir.mk
+-include src/subdir.mk
 -include subdir.mk
 -include objects.mk
 

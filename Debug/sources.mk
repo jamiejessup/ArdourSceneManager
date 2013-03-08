@@ -23,10 +23,10 @@ C_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-src/src/SceneParser \
-src/src/Scene/Track \
-src/src/Scene \
-src/src/JackMIDI \
-src/src/ArdourSessionParser \
-src/src \
+src/SceneParser \
+src/Scene/Track \
+src/Scene \
+src/JackMIDI \
+src/ArdourSessionParser \
+src \
 

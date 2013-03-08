@@ -1,5 +1,5 @@
-src/src/JackMIDI/jackMIDI.d: ../src/src/JackMIDI/jackMIDI.cpp \
- ../src/src/JackMIDI/../ASMView.h /usr/include/gtkmm-3.0/gtkmm/grid.h \
+src/JackMIDI/jackMIDI.d: ../src/JackMIDI/jackMIDI.cpp \
+ ../src/JackMIDI/../ASMView.h /usr/include/gtkmm-3.0/gtkmm/grid.h \
  /usr/include/glibmm-2.4/glibmm/ustring.h \
  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
  /usr/include/glibmm-2.4/glibmm/unicode.h /usr/include/glib-2.0/glib.h \
@@ -736,8 +736,7 @@ src/src/JackMIDI/jackMIDI.d: ../src/src/JackMIDI/jackMIDI.cpp \
  /usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h \
  /usr/include/gtkmm-3.0/gtkmm/stock.h \
  /usr/include/gtkmm-3.0/gtkmm/stockitem.h \
- ../src/src/JackMIDI/../Scene/Scene.h \
- /usr/include/libxml2/libxml/parser.h \
+ ../src/JackMIDI/../Scene/Scene.h /usr/include/libxml2/libxml/parser.h \
  /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
  /usr/include/libxml2/libxml/tree.h \
@@ -755,18 +754,17 @@ src/src/JackMIDI/jackMIDI.d: ../src/src/JackMIDI/jackMIDI.cpp \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlmemory.h \
  /usr/include/libxml2/libxml/threads.h \
- ../src/src/JackMIDI/../Scene/../JackMIDI/jackMIDI.h \
- ../src/src/JackMIDI/../Scene/../JackMIDI/midi.h \
- ../src/src/JackMIDI/../Scene/Track/Track.h \
- ../src/src/JackMIDI/../Scene/Track/../../JackMIDI/jackMIDI.h \
- ../src/src/JackMIDI/../SceneParser/SceneParser.h \
- ../src/src/JackMIDI/../SceneParser/../Scene/Scene.h \
- ../src/src/JackMIDI/../ArdourSessionParser/ArdourSession.h \
- ../src/src/JackMIDI/../ArdourSessionParser/../Scene/Scene.h \
- ../src/src/JackMIDI/../JackMIDI/jackMIDI.h \
- ../src/src/JackMIDI/../Scene/Scene.h
+ ../src/JackMIDI/../Scene/../JackMIDI/jackMIDI.h \
+ ../src/JackMIDI/../Scene/../JackMIDI/midi.h \
+ ../src/JackMIDI/../Scene/Track/Track.h \
+ ../src/JackMIDI/../Scene/Track/../../JackMIDI/jackMIDI.h \
+ ../src/JackMIDI/../SceneParser/SceneParser.h \
+ ../src/JackMIDI/../SceneParser/../Scene/Scene.h \
+ ../src/JackMIDI/../ArdourSessionParser/ArdourSession.h \
+ ../src/JackMIDI/../ArdourSessionParser/../Scene/Scene.h \
+ ../src/JackMIDI/../JackMIDI/jackMIDI.h ../src/JackMIDI/../Scene/Scene.h
 
-../src/src/JackMIDI/../ASMView.h:
+../src/JackMIDI/../ASMView.h:
 
 /usr/include/gtkmm-3.0/gtkmm/grid.h:
 
@@ -2330,7 +2328,7 @@ src/src/JackMIDI/jackMIDI.d: ../src/src/JackMIDI/jackMIDI.cpp \
 
 /usr/include/gtkmm-3.0/gtkmm/stockitem.h:
 
-../src/src/JackMIDI/../Scene/Scene.h:
+../src/JackMIDI/../Scene/Scene.h:
 
 /usr/include/libxml2/libxml/parser.h:
 
@@ -2374,22 +2372,22 @@ src/src/JackMIDI/jackMIDI.d: ../src/src/JackMIDI/jackMIDI.cpp \
 
 /usr/include/libxml2/libxml/threads.h:
 
-../src/src/JackMIDI/../Scene/../JackMIDI/jackMIDI.h:
+../src/JackMIDI/../Scene/../JackMIDI/jackMIDI.h:
 
-../src/src/JackMIDI/../Scene/../JackMIDI/midi.h:
+../src/JackMIDI/../Scene/../JackMIDI/midi.h:
 
-../src/src/JackMIDI/../Scene/Track/Track.h:
+../src/JackMIDI/../Scene/Track/Track.h:
 
-../src/src/JackMIDI/../Scene/Track/../../JackMIDI/jackMIDI.h:
+../src/JackMIDI/../Scene/Track/../../JackMIDI/jackMIDI.h:
 
-../src/src/JackMIDI/../SceneParser/SceneParser.h:
+../src/JackMIDI/../SceneParser/SceneParser.h:
 
-../src/src/JackMIDI/../SceneParser/../Scene/Scene.h:
+../src/JackMIDI/../SceneParser/../Scene/Scene.h:
 
-../src/src/JackMIDI/../ArdourSessionParser/ArdourSession.h:
+../src/JackMIDI/../ArdourSessionParser/ArdourSession.h:
 
-../src/src/JackMIDI/../ArdourSessionParser/../Scene/Scene.h:
+../src/JackMIDI/../ArdourSessionParser/../Scene/Scene.h:
 
-../src/src/JackMIDI/../JackMIDI/jackMIDI.h:
+../src/JackMIDI/../JackMIDI/jackMIDI.h:
 
-../src/src/JackMIDI/../Scene/Scene.h:
+../src/JackMIDI/../Scene/Scene.h:

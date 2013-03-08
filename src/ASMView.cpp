@@ -12,8 +12,8 @@ MainWindow::MainWindow() :
 		jack(this), myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
-				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveButton(
-				"Save Scene"), saveAsButton("Save Scene As .."), closeButton(
+				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveToFolButton("Save To Scene Folder"),saveCurButton(
+				"Save Current Scene"), saveAsButton("Save Scene As .."), closeButton(
 				"Close"), newButton("New Scene From Ardour Session"), detailedViewButton(
 				"Detailed View"), nameInfoLabel("Name:"), numTracksInfoLabel(
 				"Number of Tracks:"), numTracksLabel("0"), updatedTotalInfoLabel(
@@ -21,7 +21,8 @@ MainWindow::MainWindow() :
 				"Current Scene Details") {
 
 	jack.activate();
-	saveButton.set_sensitive(false);
+	saveToFolButton.set_sensitive(false);
+	saveCurButton.set_sensitive(false);
 	saveAsButton.set_sensitive(false);
 
 	// Set title and border of the window
@@ -68,7 +69,8 @@ MainWindow::MainWindow() :
 	// Put buttons in Box2:
 	bottomBox.pack_start(newButton);
 	bottomBox.pack_start(loadButton);
-	bottomBox.pack_start(saveButton);
+	bottomBox.pack_start(saveCurButton);
+	bottomBox.pack_start(saveToFolButton);
 	bottomBox.pack_start(saveAsButton);
 	bottomBox.pack_start(closeButton);
 
@@ -81,7 +83,7 @@ MainWindow::MainWindow() :
 			sigc::mem_fun(*this, &MainWindow::on_close_button_clicked));
 	loadButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_load_button_clicked));
-	saveButton.signal_clicked().connect(
+	saveCurButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_save_button_clicked));
 	saveAsButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_save_as_button_clicked));
@@ -129,6 +131,12 @@ void MainWindow::on_new_button_clicked() {
 	//Handle the response:
 	switch (result) {
 	case (Gtk::RESPONSE_OK): {
+		cout << dialog.get_filename() << endl;
+
+		/**
+		 * If a directory to put scenes isn't already there, create it
+		 */
+
 		/*
 		 * Parse the file
 		 */
@@ -136,7 +144,7 @@ void MainWindow::on_new_button_clicked() {
 
 		//Enable save and save as button
 		saveAsButton.set_sensitive(true);
-		saveButton.set_sensitive(false);
+		saveCurButton.set_sensitive(false);
 
 		/*
 		 * Start listening for Ardour MIDI signals
@@ -197,7 +205,7 @@ void MainWindow::on_load_button_clicked() {
 		//Notice that this is a std::string, not a Glib::ustring.
 		sceneFileName = dialog.get_filename();
 		//Enable the save buttons
-		saveButton.set_sensitive(true);
+		saveCurButton.set_sensitive(true);
 		saveAsButton.set_sensitive(true);
 
 		/*
@@ -283,7 +291,7 @@ void MainWindow::on_save_as_button_clicked() {
 		myScene.setName(nameEntry.get_text());
 		sceneParser.saveSceneToFile(&myScene,sceneFileName);
 		//Enable the save button
-		saveButton.set_sensitive(true);
+		saveCurButton.set_sensitive(true);
 		showSceneDetails();
 		break;
 	}

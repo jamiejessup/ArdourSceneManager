@@ -1,5 +1,7 @@
-src/src/SceneParser/SceneParser.d: ../src/src/SceneParser/SceneParser.cpp \
- ../src/src/SceneParser/SceneParser.h \
+src/ArdourSessionParser/ArdourSession.d: \
+ ../src/ArdourSessionParser/ArdourSession.cpp \
+ ../src/ArdourSessionParser/ArdourSession.h \
+ ../src/ArdourSessionParser/../Scene/Scene.h \
  /usr/include/libxml2/libxml/parser.h \
  /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
@@ -18,13 +20,14 @@ src/src/SceneParser/SceneParser.d: ../src/src/SceneParser/SceneParser.cpp \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlmemory.h \
  /usr/include/libxml2/libxml/threads.h \
- ../src/src/SceneParser/../Scene/Scene.h \
- ../src/src/SceneParser/../Scene/../JackMIDI/jackMIDI.h \
- ../src/src/SceneParser/../Scene/../JackMIDI/midi.h \
- ../src/src/SceneParser/../Scene/Track/Track.h \
- ../src/src/SceneParser/../Scene/Track/../../JackMIDI/jackMIDI.h
+ ../src/ArdourSessionParser/../Scene/../JackMIDI/jackMIDI.h \
+ ../src/ArdourSessionParser/../Scene/../JackMIDI/midi.h \
+ ../src/ArdourSessionParser/../Scene/Track/Track.h \
+ ../src/ArdourSessionParser/../Scene/Track/../../JackMIDI/jackMIDI.h
 
-../src/src/SceneParser/SceneParser.h:
+../src/ArdourSessionParser/ArdourSession.h:
+
+../src/ArdourSessionParser/../Scene/Scene.h:
 
 /usr/include/libxml2/libxml/parser.h:
 
@@ -68,12 +71,10 @@ src/src/SceneParser/SceneParser.d: ../src/src/SceneParser/SceneParser.cpp \
 
 /usr/include/libxml2/libxml/threads.h:
 
-../src/src/SceneParser/../Scene/Scene.h:
+../src/ArdourSessionParser/../Scene/../JackMIDI/jackMIDI.h:
 
-../src/src/SceneParser/../Scene/../JackMIDI/jackMIDI.h:
+../src/ArdourSessionParser/../Scene/../JackMIDI/midi.h:
 
-../src/src/SceneParser/../Scene/../JackMIDI/midi.h:
+../src/ArdourSessionParser/../Scene/Track/Track.h:
 
-../src/src/SceneParser/../Scene/Track/Track.h:
-
-../src/src/SceneParser/../Scene/Track/../../JackMIDI/jackMIDI.h:
+../src/ArdourSessionParser/../Scene/Track/../../JackMIDI/jackMIDI.h:

@@ -1,5 +1,5 @@
-src/src/Scene/Scene.d: ../src/src/Scene/Scene.cpp \
- ../src/src/Scene/Scene.h /usr/include/libxml2/libxml/parser.h \
+src/Scene/Scene.d: ../src/Scene/Scene.cpp ../src/Scene/Scene.h \
+ /usr/include/libxml2/libxml/parser.h \
  /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
  /usr/include/libxml2/libxml/tree.h \
@@ -17,11 +17,10 @@ src/src/Scene/Scene.d: ../src/src/Scene/Scene.cpp \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlmemory.h \
  /usr/include/libxml2/libxml/threads.h \
- ../src/src/Scene/../JackMIDI/jackMIDI.h \
- ../src/src/Scene/../JackMIDI/midi.h ../src/src/Scene/Track/Track.h \
- ../src/src/Scene/Track/../../JackMIDI/jackMIDI.h
+ ../src/Scene/../JackMIDI/jackMIDI.h ../src/Scene/../JackMIDI/midi.h \
+ ../src/Scene/Track/Track.h ../src/Scene/Track/../../JackMIDI/jackMIDI.h
 
-../src/src/Scene/Scene.h:
+../src/Scene/Scene.h:
 
 /usr/include/libxml2/libxml/parser.h:
 
@@ -65,10 +64,10 @@ src/src/Scene/Scene.d: ../src/src/Scene/Scene.cpp \
 
 /usr/include/libxml2/libxml/threads.h:
 
-../src/src/Scene/../JackMIDI/jackMIDI.h:
+../src/Scene/../JackMIDI/jackMIDI.h:
 
-../src/src/Scene/../JackMIDI/midi.h:
+../src/Scene/../JackMIDI/midi.h:
 
-../src/src/Scene/Track/Track.h:
+../src/Scene/Track/Track.h:
 
-../src/src/Scene/Track/../../JackMIDI/jackMIDI.h:
+../src/Scene/Track/../../JackMIDI/jackMIDI.h:
