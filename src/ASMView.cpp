@@ -12,9 +12,10 @@ MainWindow::MainWindow() :
 		jack(this), myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
-				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveToFolButton("Save To Scene Folder"),saveCurButton(
-				"Save Current Scene"), saveAsButton("Save Scene As .."), closeButton(
-				"Close"), newButton("New Scene From Ardour Session"), detailedViewButton(
+				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveToFolButton(
+				"Save To Scene Folder"), saveCurButton("Save Current Scene"), saveAsButton(
+				"Save Scene As .."), closeButton("Close"), newButton(
+				"New Scene From Ardour Session"), detailedViewButton(
 				"Detailed View"), nameInfoLabel("Name:"), numTracksInfoLabel(
 				"Number of Tracks:"), numTracksLabel("0"), updatedTotalInfoLabel(
 				"Tracks Updated: "), updatedTotalLabel("0"), sceneFrame(
@@ -90,8 +91,7 @@ MainWindow::MainWindow() :
 	newButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_new_button_clicked));
 	saveToFolButton.signal_clicked().connect(
-				sigc::mem_fun(*this, &MainWindow::on_save_to_fol_button_clicked));
-
+			sigc::mem_fun(*this, &MainWindow::on_save_to_fol_button_clicked));
 
 	// Show all children of the window
 	show_all_children();
@@ -143,16 +143,16 @@ void MainWindow::on_new_button_clicked() {
 		//get the session directory (remove session file)
 		size_t found = scenesDir.find_last_of("/");
 		//Remove the session file name
-		for(unsigned int i = found+1; i<scenesDir.size(); i++) {
+		for (unsigned int i = found + 1; i < scenesDir.size(); i++) {
 			scenesDir.erase(i);
 		}
 		//Add "Scenes to the path"
 		scenesDir.append("Scenes/");
 		//Make the directory if not already there
-		struct stat st = {0};
+		struct stat st = { 0 };
 
 		if (stat(scenesDir.c_str(), &st) == -1) {
-		    mkdir(scenesDir.c_str(), 0700);
+			mkdir(scenesDir.c_str(), 0700);
 		}
 
 		/*
@@ -230,7 +230,7 @@ void MainWindow::on_load_button_clicked() {
 		/*
 		 * Parse the file
 		 */
-		sceneParser.loadSceneFromFile(&myScene,sceneFileName);
+		sceneParser.loadSceneFromFile(&myScene, sceneFileName);
 
 		/*
 		 * And then send it to Ardour
@@ -267,7 +267,7 @@ void MainWindow::on_save_button_clicked() {
 	/**
 	 * Save the scene to the file
 	 */
-	sceneParser.saveSceneToFile(&myScene,sceneFileName);
+	sceneParser.saveSceneToFile(&myScene, sceneFileName);
 	showSceneDetails();
 }
 
@@ -308,7 +308,7 @@ void MainWindow::on_save_as_button_clicked() {
 		//Write the contents of the scene to file
 		//Get the scene name
 		myScene.setName(nameEntry.get_text());
-		sceneParser.saveSceneToFile(&myScene,sceneFileName);
+		sceneParser.saveSceneToFile(&myScene, sceneFileName);
 		//Enable the save button
 		saveCurButton.set_sensitive(true);
 		showSceneDetails();
@@ -333,17 +333,43 @@ void MainWindow::on_save_to_fol_button_clicked() {
 	/*
 	 * Run a dialog to get a file name to save the file with
 	 */
+	//Add response buttons the the dialog:
+	fileNameDialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	fileNameDialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 
-	//TODO make a dialog window to return a file name
+	int result = fileNameDialog.run();
+
+	fileNameDialog.hide();
 
 	//Give a dummy file name for now
 	string fileName = scenesDir;
-	fileName.append("test");
+
+	//Handle the response:
+	switch (result) {
+	case (Gtk::RESPONSE_OK): {
+		string temp = fileNameDialog.getFileName();
+		if (temp.size() != 0)
+			fileName.append(temp);
+		else {
+			//change this to a recursion style error handler
+			fileName.append("myScene");
+		}
+		break;
+	}
+	case (Gtk::RESPONSE_CANCEL): {
+		//Well nothing
+		break;
+	}
+	default: {
+		std::cout << "Unexpected button clicked." << std::endl;
+		break;
+	}
+	}
 
 	/**
 	 * Save the scene to the scene folder
 	 */
-	sceneParser.saveSceneToFile(&myScene,fileName);
+	sceneParser.saveSceneToFile(&myScene, fileName);
 
 	//Make the current scene the one we just saved
 	sceneFileName = fileName;

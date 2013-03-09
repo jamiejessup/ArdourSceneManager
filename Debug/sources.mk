@@ -27,6 +27,7 @@ src/SceneParser \
 src/Scene/Track \
 src/Scene \
 src/JackMIDI \
+src/FileNameDialog \
 src/ArdourSessionParser \
 src \
 

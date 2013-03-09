@@ -23,69 +23,69 @@
 #include "SceneParser/SceneParser.h"
 #include "ArdourSessionParser/ArdourSession.h"
 #include "JackMIDI/jackMIDI.h"
+#include "FileNameDialog/FileNameDialog.h"
 #include <iostream>
 #include <stdlib.h>
 
-class MainWindow : public Gtk::Window
-{
-	 //Signal handlers:
-	  void on_new_button_clicked();
-	  void on_load_button_clicked();
-	  void on_save_as_button_clicked();
-	  void on_close_button_clicked();
-	  void on_save_button_clicked();
-	  void on_save_to_fol_button_clicked();
+class MainWindow: public Gtk::Window {
+	//Signal handlers:
+	void on_new_button_clicked();
+	void on_load_button_clicked();
+	void on_save_as_button_clicked();
+	void on_close_button_clicked();
+	void on_save_button_clicked();
+	void on_save_to_fol_button_clicked();
 
-	  //Jack MIDI Handler
-	  Jack jack;
+	//Jack MIDI Handler
+	Jack jack;
 
-	  //Scene stuff
-	  string sceneFileName;
-	  Scene myScene;
+	//Scene stuff
+	string sceneFileName;
+	Scene myScene;
 
-	  //A scene parser
-	  SceneParser sceneParser;
+	//A scene parser
+	SceneParser sceneParser;
 
-	  //A scene directory
-	  string scenesDir;
+	//A scene directory
+	string scenesDir;
 
+	//Ardour Session Handler
+	ArdourSession sessionHandler;
 
-	  //Ardour Session Handler
-	  ArdourSession sessionHandler;
+	//Child widgets:
 
-	  //Child widgets:
+	//File name chooser dialog
+	FileNameDialog fileNameDialog;
 
-	  //Boxes and organization stuff:
-	  Gtk::Box topLevelBox, topBox, bottomBox, frameBox;
-	  Gtk::Separator seperator;
-	  Gtk::Grid detailGrid;
+	//Boxes and organization stuff:
+	Gtk::Box topLevelBox, topBox, bottomBox, frameBox;
+	Gtk::Separator seperator;
+	Gtk::Grid detailGrid;
 
-	  //Buttons:
-	  Gtk::Button loadButton;
-	  Gtk::Button saveToFolButton;
-	  Gtk::Button saveCurButton;
-	  Gtk::Button saveAsButton;
-	  Gtk::Button closeButton;
-	  Gtk::Button newButton;
-	  Gtk::Button detailedViewButton;
+	//Buttons:
+	Gtk::Button loadButton;
+	Gtk::Button saveToFolButton;
+	Gtk::Button saveCurButton;
+	Gtk::Button saveAsButton;
+	Gtk::Button closeButton;
+	Gtk::Button newButton;
+	Gtk::Button detailedViewButton;
 
-
-	  //Information Text
-	  Gtk::Label nameInfoLabel;
-	  Gtk::Entry nameEntry;
-	  Gtk::Label numTracksInfoLabel;
-	  Gtk::Label numTracksLabel;
-	  Gtk::Label updatedTotalInfoLabel;
-	  Gtk::Label updatedTotalLabel;
-	  Gtk::Frame sceneFrame;
+	//Information Text
+	Gtk::Label nameInfoLabel;
+	Gtk::Entry nameEntry;
+	Gtk::Label numTracksInfoLabel;
+	Gtk::Label numTracksLabel;
+	Gtk::Label updatedTotalInfoLabel;
+	Gtk::Label updatedTotalLabel;
+	Gtk::Frame sceneFrame;
 public:
-  MainWindow();
-  virtual ~MainWindow();
+	MainWindow();
+	virtual ~MainWindow();
 
-  //Shows scene details
-  void showSceneDetails();
+	//Shows scene details
+	void showSceneDetails();
 };
 
 #endif //GTKMM_EXAMPLE_RADIOBUTTONS_H
-
 

@@ -12,6 +12,7 @@ RM := rm -rf
 -include src/Scene/Track/subdir.mk
 -include src/Scene/subdir.mk
 -include src/JackMIDI/subdir.mk
+-include src/FileNameDialog/subdir.mk
 -include src/ArdourSessionParser/subdir.mk
 -include src/subdir.mk
 -include subdir.mk

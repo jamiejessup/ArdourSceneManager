@@ -1,5 +1,7 @@
-src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
- /usr/include/gtkmm-3.0/gtkmm/grid.h \
+src/FileNameDialog/FileNameDialog.d: \
+ ../src/FileNameDialog/FileNameDialog.cpp \
+ ../src/FileNameDialog/FileNameDialog.h \
+ /usr/include/gtkmm-3.0/gtkmm/box.h \
  /usr/include/glibmm-2.4/glibmm/ustring.h \
  /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
  /usr/include/glibmm-2.4/glibmm/unicode.h /usr/include/glib-2.0/glib.h \
@@ -659,7 +661,7 @@ src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
  /usr/include/gtkmm-3.0/gtkmm/iconset.h \
  /usr/include/gtkmm-3.0/gtkmm/widgetpath.h \
  /usr/include/gtkmm-3.0/gtkmm/orientable.h \
- /usr/include/gtkmm-3.0/gtkmm/box.h /usr/include/gtkmm-3.0/gtkmm/hvbox.h \
+ /usr/include/gtkmm-3.0/gtkmm/hvbox.h \
  /usr/include/gtkmm-3.0/gtkmm/entry.h \
  /usr/include/gtkmm-3.0/gtkmm/editable.h \
  /usr/include/gtkmm-3.0/gtkmm/menu.h \
@@ -690,6 +692,7 @@ src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufanimationiter.h \
  /usr/include/glibmm-2.4/glibmm/timeval.h \
  /usr/include/gtkmm-3.0/gtkmm/entrybuffer.h \
+ /usr/include/gtkmm-3.0/gtkmm/dialog.h \
  /usr/include/gtkmm-3.0/gtkmm/window.h \
  /usr/include/gtkmm-3.0/gtkmm/application.h \
  /usr/include/gtkmm-3.0/gtkmm/actiongroup.h \
@@ -719,51 +722,15 @@ src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
  /usr/include/giomm-2.4/giomm/mount.h \
  /usr/include/giomm-2.4/giomm/error.h \
  /usr/include/giomm-2.4/giomm/menumodel.h \
- /usr/include/gtkmm-3.0/gtkmm/radiobutton.h \
- /usr/include/gtkmm-3.0/gtkmm/checkbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/togglebutton.h \
  /usr/include/gtkmm-3.0/gtkmm/button.h \
- /usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h \
- /usr/include/gtkmm-3.0/gtkmm/frame.h \
- /usr/include/gtkmm-3.0/gtkmm/separator.h \
- /usr/include/gtkmm-3.0/gtkmm/hvseparator.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooserdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/dialog.h \
  /usr/include/gtkmm-3.0/gtkmm/buttonbox.h \
  /usr/include/gtkmm-3.0/gtkmm/hvbuttonbox.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooser.h \
- /usr/include/gtkmm-3.0/gtkmm/filefilter.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h \
  /usr/include/gtkmm-3.0/gtkmm/stock.h \
- /usr/include/gtkmm-3.0/gtkmm/stockitem.h ../src/Scene/Scene.h \
- /usr/include/libxml2/libxml/parser.h \
- /usr/include/libxml2/libxml/xmlversion.h \
- /usr/include/libxml2/libxml/xmlexports.h \
- /usr/include/libxml2/libxml/tree.h \
- /usr/include/libxml2/libxml/xmlstring.h \
- /usr/include/libxml2/libxml/xmlregexp.h \
- /usr/include/libxml2/libxml/dict.h /usr/include/libxml2/libxml/hash.h \
- /usr/include/libxml2/libxml/valid.h \
- /usr/include/libxml2/libxml/xmlerror.h \
- /usr/include/libxml2/libxml/list.h \
- /usr/include/libxml2/libxml/xmlautomata.h \
- /usr/include/libxml2/libxml/entities.h \
- /usr/include/libxml2/libxml/encoding.h \
- /usr/include/libxml2/libxml/xmlIO.h \
- /usr/include/libxml2/libxml/globals.h /usr/include/libxml2/libxml/SAX.h \
- /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
- /usr/include/libxml2/libxml/xmlmemory.h \
- /usr/include/libxml2/libxml/threads.h \
- ../src/Scene/../JackMIDI/jackMIDI.h ../src/Scene/../JackMIDI/midi.h \
- ../src/Scene/Track/Track.h ../src/Scene/Track/../../JackMIDI/jackMIDI.h \
- ../src/SceneParser/SceneParser.h ../src/SceneParser/../Scene/Scene.h \
- ../src/ArdourSessionParser/ArdourSession.h \
- ../src/ArdourSessionParser/../Scene/Scene.h ../src/JackMIDI/jackMIDI.h \
- ../src/FileNameDialog/FileNameDialog.h
+ /usr/include/gtkmm-3.0/gtkmm/stockitem.h
 
-../src/ASMView.h:
+../src/FileNameDialog/FileNameDialog.h:
 
-/usr/include/gtkmm-3.0/gtkmm/grid.h:
+/usr/include/gtkmm-3.0/gtkmm/box.h:
 
 /usr/include/glibmm-2.4/glibmm/ustring.h:
 
@@ -2167,8 +2134,6 @@ src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
 
 /usr/include/gtkmm-3.0/gtkmm/orientable.h:
 
-/usr/include/gtkmm-3.0/gtkmm/box.h:
-
 /usr/include/gtkmm-3.0/gtkmm/hvbox.h:
 
 /usr/include/gtkmm-3.0/gtkmm/entry.h:
@@ -2233,6 +2198,8 @@ src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
 
 /usr/include/gtkmm-3.0/gtkmm/entrybuffer.h:
 
+/usr/include/gtkmm-3.0/gtkmm/dialog.h:
+
 /usr/include/gtkmm-3.0/gtkmm/window.h:
 
 /usr/include/gtkmm-3.0/gtkmm/application.h:
@@ -2291,100 +2258,12 @@ src/ArdourSceneManager.d: ../src/ArdourSceneManager.cpp ../src/ASMView.h \
 
 /usr/include/giomm-2.4/giomm/menumodel.h:
 
-/usr/include/gtkmm-3.0/gtkmm/radiobutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/checkbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/togglebutton.h:
-
 /usr/include/gtkmm-3.0/gtkmm/button.h:
-
-/usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/frame.h:
-
-/usr/include/gtkmm-3.0/gtkmm/separator.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvseparator.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filechooserdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/dialog.h:
 
 /usr/include/gtkmm-3.0/gtkmm/buttonbox.h:
 
 /usr/include/gtkmm-3.0/gtkmm/hvbuttonbox.h:
 
-/usr/include/gtkmm-3.0/gtkmm/filechooser.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filefilter.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h:
-
 /usr/include/gtkmm-3.0/gtkmm/stock.h:
 
 /usr/include/gtkmm-3.0/gtkmm/stockitem.h:
-
-../src/Scene/Scene.h:
-
-/usr/include/libxml2/libxml/parser.h:
-
-/usr/include/libxml2/libxml/xmlversion.h:
-
-/usr/include/libxml2/libxml/xmlexports.h:
-
-/usr/include/libxml2/libxml/tree.h:
-
-/usr/include/libxml2/libxml/xmlstring.h:
-
-/usr/include/libxml2/libxml/xmlregexp.h:
-
-/usr/include/libxml2/libxml/dict.h:
-
-/usr/include/libxml2/libxml/hash.h:
-
-/usr/include/libxml2/libxml/valid.h:
-
-/usr/include/libxml2/libxml/xmlerror.h:
-
-/usr/include/libxml2/libxml/list.h:
-
-/usr/include/libxml2/libxml/xmlautomata.h:
-
-/usr/include/libxml2/libxml/entities.h:
-
-/usr/include/libxml2/libxml/encoding.h:
-
-/usr/include/libxml2/libxml/xmlIO.h:
-
-/usr/include/libxml2/libxml/globals.h:
-
-/usr/include/libxml2/libxml/SAX.h:
-
-/usr/include/libxml2/libxml/xlink.h:
-
-/usr/include/libxml2/libxml/SAX2.h:
-
-/usr/include/libxml2/libxml/xmlmemory.h:
-
-/usr/include/libxml2/libxml/threads.h:
-
-../src/Scene/../JackMIDI/jackMIDI.h:
-
-../src/Scene/../JackMIDI/midi.h:
-
-../src/Scene/Track/Track.h:
-
-../src/Scene/Track/../../JackMIDI/jackMIDI.h:
-
-../src/SceneParser/SceneParser.h:
-
-../src/SceneParser/../Scene/Scene.h:
-
-../src/ArdourSessionParser/ArdourSession.h:
-
-../src/ArdourSessionParser/../Scene/Scene.h:
-
-../src/JackMIDI/jackMIDI.h:
-
-../src/FileNameDialog/FileNameDialog.h:
