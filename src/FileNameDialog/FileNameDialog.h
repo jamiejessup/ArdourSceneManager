@@ -22,9 +22,9 @@ public:
 	FileNameDialog();
 	virtual ~FileNameDialog();
 	string getFileName();
+	Gtk::Label label;
 protected:
 	Gtk::Box box;
-	Gtk::Label label;
 	Gtk::Entry entry;
 };
 

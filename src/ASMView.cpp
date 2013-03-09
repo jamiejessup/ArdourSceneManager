@@ -337,34 +337,35 @@ void MainWindow::on_save_to_fol_button_clicked() {
 	fileNameDialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 	fileNameDialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 
-	int result = fileNameDialog.run();
-
-	fileNameDialog.hide();
-
-	//Give a dummy file name for now
+	bool ok = false;
 	string fileName = scenesDir;
+	do {
+		int result = fileNameDialog.run();
 
-	//Handle the response:
-	switch (result) {
-	case (Gtk::RESPONSE_OK): {
-		string temp = fileNameDialog.getFileName();
-		if (temp.size() != 0)
-			fileName.append(temp);
-		else {
-			//change this to a recursion style error handler
-			fileName.append("myScene");
+		fileNameDialog.hide();
+
+		//Handle the response:
+		switch (result) {
+		case (Gtk::RESPONSE_OK): {
+			string temp = fileNameDialog.getFileName();
+			if (temp.size() != 0) {
+				fileName.append(temp);
+				ok = true;
+			} else {
+				fileNameDialog.label.set_text("Be sure to specify a file name");
+			}
+			break;
 		}
-		break;
-	}
-	case (Gtk::RESPONSE_CANCEL): {
-		//Well nothing
-		break;
-	}
-	default: {
-		std::cout << "Unexpected button clicked." << std::endl;
-		break;
-	}
-	}
+		case (Gtk::RESPONSE_CANCEL): {
+			ok = true;
+			break;
+		}
+		default: {
+			ok = true;
+			break;
+		}
+		}
+	} while (!ok);
 
 	/**
 	 * Save the scene to the scene folder
