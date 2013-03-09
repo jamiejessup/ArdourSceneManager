@@ -34,6 +34,7 @@ class MainWindow : public Gtk::Window
 	  void on_save_as_button_clicked();
 	  void on_close_button_clicked();
 	  void on_save_button_clicked();
+	  void on_save_to_fol_button_clicked();
 
 	  //Jack MIDI Handler
 	  Jack jack;
@@ -44,6 +45,9 @@ class MainWindow : public Gtk::Window
 
 	  //A scene parser
 	  SceneParser sceneParser;
+
+	  //A scene directory
+	  string scenesDir;
 
 
 	  //Ardour Session Handler

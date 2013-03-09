@@ -89,6 +89,9 @@ MainWindow::MainWindow() :
 			sigc::mem_fun(*this, &MainWindow::on_save_as_button_clicked));
 	newButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_new_button_clicked));
+	saveToFolButton.signal_clicked().connect(
+				sigc::mem_fun(*this, &MainWindow::on_save_to_fol_button_clicked));
+
 
 	// Show all children of the window
 	show_all_children();
@@ -131,18 +134,34 @@ void MainWindow::on_new_button_clicked() {
 	//Handle the response:
 	switch (result) {
 	case (Gtk::RESPONSE_OK): {
-		cout << dialog.get_filename() << endl;
 
 		/**
 		 * If a directory to put scenes isn't already there, create it
 		 */
+
+		scenesDir = dialog.get_filename();
+		//get the session directory (remove session file)
+		size_t found = scenesDir.find_last_of("/");
+		//Remove the session file name
+		for(unsigned int i = found+1; i<scenesDir.size(); i++) {
+			scenesDir.erase(i);
+		}
+		//Add "Scenes to the path"
+		scenesDir.append("Scenes/");
+		//Make the directory if not already there
+		struct stat st = {0};
+
+		if (stat(scenesDir.c_str(), &st) == -1) {
+		    mkdir(scenesDir.c_str(), 0700);
+		}
 
 		/*
 		 * Parse the file
 		 */
 		sessionHandler.init(dialog.get_filename(), &myScene);
 
-		//Enable save and save as button
+		//Enable save and save as buttons
+		saveToFolButton.set_sensitive(true);
 		saveAsButton.set_sensitive(true);
 		saveCurButton.set_sensitive(false);
 
@@ -306,6 +325,30 @@ void MainWindow::on_save_as_button_clicked() {
 	}
 	}
 
+}
+
+void MainWindow::on_save_to_fol_button_clicked() {
+	//Get the scene name
+	myScene.setName(nameEntry.get_text());
+	/*
+	 * Run a dialog to get a file name to save the file with
+	 */
+
+	//TODO make a dialog window to return a file name
+
+	//Give a dummy file name for now
+	string fileName = scenesDir;
+	fileName.append("test");
+
+	/**
+	 * Save the scene to the scene folder
+	 */
+	sceneParser.saveSceneToFile(&myScene,fileName);
+
+	//Make the current scene the one we just saved
+	sceneFileName = fileName;
+	showSceneDetails();
+	saveCurButton.set_sensitive(true);
 }
 
 void MainWindow::showSceneDetails() {
