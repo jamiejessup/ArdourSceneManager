@@ -33,6 +33,8 @@
 #include <dirent.h>
 
 class MainWindow: public Gtk::Window {
+	void loadNewSceneFile();
+
 	//Signal handlers:
 	void on_new_button_clicked();
 	void on_load_button_clicked();
@@ -40,6 +42,7 @@ class MainWindow: public Gtk::Window {
 	void on_close_button_clicked();
 	void on_save_button_clicked();
 	void on_save_to_fol_button_clicked();
+	void on_scene_file_activated(const Gtk::TreeModel::Path &, Gtk::TreeViewColumn*);
 
 	//Jack MIDI Handler
 	Jack jack;

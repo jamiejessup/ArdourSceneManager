@@ -114,6 +114,10 @@ MainWindow::MainWindow() :
 	saveToFolButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_save_to_fol_button_clicked));
 
+	//Connect the signals of rows in the tree view for double click and enter
+	m_TreeView.signal_row_activated().connect(
+			sigc::mem_fun(*this, &MainWindow::on_scene_file_activated));
+
 	// Show all children of the window
 	show_all_children();
 
@@ -216,32 +220,7 @@ void MainWindow::on_new_button_clicked() {
 }
 
 void MainWindow::on_load_button_clicked() {
-	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
-			m_TreeView.get_selection();
-	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
-	if (iter) {
-		Gtk::TreeModel::Row row = *iter;
-		//Get the file name to load from the row
-		string newSceneFile = scenesDir;
-		newSceneFile += row.get_value(m_Columns.fileNameColumn);
-		sceneFileName = newSceneFile;
-		/*
-		 * Parse the file
-		 */
-		sceneParser.loadSceneFromFile(&myScene, sceneFileName);
-
-		/*
-		 * And then send it to Ardour
-		 */
-		myScene.sendSceneToArdour();
-
-		/*
-		 * Start listening for Ardour MIDI signals if we haven't already
-		 */
-		jack.setScene(&myScene);
-		showSceneDetails();
-	}
-
+	loadNewSceneFile();
 }
 
 void MainWindow::on_save_button_clicked() {
@@ -409,5 +388,38 @@ void MainWindow::scanAvailableSceneFiles() {
 		Gtk::TreeModel::Row row = *(m_refTreeModel->append());
 		row[m_Columns.fileNamePresentationColumn] = withoutExt;
 		row[m_Columns.fileNameColumn] = sceneFiles[i];
+	}
+}
+
+void MainWindow::on_scene_file_activated(const Gtk::TreeModel::Path &, Gtk::TreeViewColumn*) {
+	loadNewSceneFile();
+}
+
+void MainWindow::loadNewSceneFile() {
+	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
+			m_TreeView.get_selection();
+	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
+	if (iter) {
+		Gtk::TreeModel::Row row = *iter;
+		//Get the file name to load from the row
+		string newSceneFile = scenesDir;
+		newSceneFile += row.get_value(m_Columns.fileNameColumn);
+		sceneFileName = newSceneFile;
+
+		/*
+		 * Parse the file
+		 */
+		sceneParser.loadSceneFromFile(&myScene, sceneFileName);
+
+		/*
+		 * And then send it to Ardour
+		 */
+		myScene.sendSceneToArdour();
+
+		/*
+		 * Start listening for Ardour MIDI signals if we haven't already
+		 */
+		jack.setScene(&myScene);
+		showSceneDetails();
 	}
 }
