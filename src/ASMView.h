@@ -18,6 +18,10 @@
 #include <gtkmm/separator.h>
 #include <gtkmm/filechooserdialog.h>
 #include <gtkmm/filechooserbutton.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/treemodel.h>
 #include <gtkmm/stock.h>
 #include "Scene/Scene.h"
 #include "SceneParser/SceneParser.h"
@@ -26,6 +30,7 @@
 #include "FileNameDialog/FileNameDialog.h"
 #include <iostream>
 #include <stdlib.h>
+#include <dirent.h>
 
 class MainWindow: public Gtk::Window {
 	//Signal handlers:
@@ -48,6 +53,8 @@ class MainWindow: public Gtk::Window {
 
 	//A scene directory
 	string scenesDir;
+	//A List of scene files
+	vector<string> sceneFiles;
 
 	//Ardour Session Handler
 	ArdourSession sessionHandler;
@@ -58,8 +65,9 @@ class MainWindow: public Gtk::Window {
 	FileNameDialog fileNameDialog;
 
 	//Boxes and organization stuff:
-	Gtk::Box topLevelBox, topBox, bottomBox, frameBox;
+	Gtk::Box topLevelBox, topBox, middleBox,bottomBox, frameBox;
 	Gtk::Separator seperator;
+	Gtk::Separator seperator2;
 	Gtk::Grid detailGrid;
 
 	//Buttons:
@@ -79,6 +87,29 @@ class MainWindow: public Gtk::Window {
 	Gtk::Label updatedTotalInfoLabel;
 	Gtk::Label updatedTotalLabel;
 	Gtk::Frame sceneFrame;
+
+	//Tree model columns:
+	class ModelColumns: public Gtk::TreeModel::ColumnRecord {
+	public:
+
+		ModelColumns() {
+			add(fileNameColumn), add(fileNamePresentationColumn);
+		}
+
+		Gtk::TreeModelColumn<string> fileNamePresentationColumn;
+		Gtk::TreeModelColumn<string> fileNameColumn;
+	};
+
+	//Tree view stuff to display the scene files that are in the folder
+	ModelColumns m_Columns;
+
+	Gtk::ScrolledWindow m_ScrolledWindow;
+	Gtk::TreeView m_TreeView;
+	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
+
+	//Tree view filler
+	void scanAvailableSceneFiles();
+
 public:
 	MainWindow();
 	virtual ~MainWindow();
@@ -88,4 +119,3 @@ public:
 };
 
 #endif //GTKMM_EXAMPLE_RADIOBUTTONS_H
-

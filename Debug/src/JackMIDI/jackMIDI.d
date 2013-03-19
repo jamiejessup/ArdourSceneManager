@@ -734,6 +734,17 @@ src/JackMIDI/jackMIDI.d: ../src/JackMIDI/jackMIDI.cpp \
  /usr/include/gtkmm-3.0/gtkmm/filechooser.h \
  /usr/include/gtkmm-3.0/gtkmm/filefilter.h \
  /usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h \
+ /usr/include/gtkmm-3.0/gtkmm/scrolledwindow.h \
+ /usr/include/gtkmm-3.0/gtkmm/liststore.h \
+ /usr/include/gtkmm-3.0/gtkmm/treesortable.h \
+ /usr/include/gtkmm-3.0/gtkmm/treedragdest.h \
+ /usr/include/gtkmm-3.0/gtkmm/treedragsource.h \
+ /usr/include/gtkmm-3.0/gtkmm/treepath.h \
+ /usr/include/gtkmm-3.0/gtkmm/treeview.h \
+ /usr/include/gtkmm-3.0/gtkmm/treeviewcolumn.h \
+ /usr/include/gtkmm-3.0/gtkmm/treeselection.h \
+ /usr/include/gtkmm-3.0/gtkmm/scrollable.h \
+ /usr/include/gtkmm-3.0/gtkmm/tooltip.h \
  /usr/include/gtkmm-3.0/gtkmm/stock.h \
  /usr/include/gtkmm-3.0/gtkmm/stockitem.h \
  ../src/JackMIDI/../Scene/Scene.h /usr/include/libxml2/libxml/parser.h \
@@ -2325,6 +2336,28 @@ src/JackMIDI/jackMIDI.d: ../src/JackMIDI/jackMIDI.cpp \
 /usr/include/gtkmm-3.0/gtkmm/filefilter.h:
 
 /usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h:
+
+/usr/include/gtkmm-3.0/gtkmm/scrolledwindow.h:
+
+/usr/include/gtkmm-3.0/gtkmm/liststore.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treesortable.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treedragdest.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treedragsource.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treepath.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treeview.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treeviewcolumn.h:
+
+/usr/include/gtkmm-3.0/gtkmm/treeselection.h:
+
+/usr/include/gtkmm-3.0/gtkmm/scrollable.h:
+
+/usr/include/gtkmm-3.0/gtkmm/tooltip.h:
 
 /usr/include/gtkmm-3.0/gtkmm/stock.h:
 

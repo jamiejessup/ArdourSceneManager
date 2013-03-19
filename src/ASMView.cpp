@@ -10,6 +10,7 @@
 
 MainWindow::MainWindow() :
 		jack(this), myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
+				Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
 				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveToFolButton(
@@ -25,6 +26,7 @@ MainWindow::MainWindow() :
 	saveToFolButton.set_sensitive(false);
 	saveCurButton.set_sensitive(false);
 	saveAsButton.set_sensitive(false);
+	loadButton.set_sensitive(false);
 
 	// Set title and border of the window
 	set_title("Ardour Scene Manager");
@@ -34,9 +36,16 @@ MainWindow::MainWindow() :
 	// can only contain a single widget)
 	add(topLevelBox);
 
+	//Add the TreeView, inside a ScrolledWindow
+	m_ScrolledWindow.add(m_TreeView);
+	m_ScrolledWindow.set_size_request(10, 150);
+	m_ScrolledWindow.set_sensitive(false);
+
 	//Put the inner boxes and the separator in the outer box:
 	topLevelBox.pack_start(topBox);
 	topLevelBox.pack_start(seperator);
+	topLevelBox.pack_start(middleBox);
+	topLevelBox.pack_start(seperator2);
 	topLevelBox.pack_start(bottomBox);
 
 	// Set the inner boxes' borders
@@ -67,7 +76,19 @@ MainWindow::MainWindow() :
 	// Put the scene frame in box 1
 	topBox.pack_start(sceneFrame);
 
-	// Put buttons in Box2:
+	/*
+	 * Add the tree view to the window with all scene files in the session's folder
+	 */
+	//Only show the scrollbars when they are necessary:
+	m_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	//Add the scrolled window
+	middleBox.pack_start(m_ScrolledWindow);
+	//Add few black rows for now
+	//Add the TreeView's view columns:
+	m_TreeView.append_column("Scene File Name",
+			m_Columns.fileNamePresentationColumn);
+
+	// Put buttons in the bottom Box:
 	bottomBox.pack_start(newButton);
 	bottomBox.pack_start(loadButton);
 	bottomBox.pack_start(saveCurButton);
@@ -164,6 +185,7 @@ void MainWindow::on_new_button_clicked() {
 		saveToFolButton.set_sensitive(true);
 		saveAsButton.set_sensitive(true);
 		saveCurButton.set_sensitive(false);
+		loadButton.set_sensitive(true);
 
 		/*
 		 * Start listening for Ardour MIDI signals
@@ -173,8 +195,11 @@ void MainWindow::on_new_button_clicked() {
 		/*
 		 * Update the GUI layout
 		 */
+
 		detailGrid.set_sensitive(true);
 		showSceneDetails();
+		m_ScrolledWindow.set_sensitive(true);
+		scanAvailableSceneFiles();
 		break;
 	}
 	case (Gtk::RESPONSE_CANCEL): {
@@ -191,42 +216,15 @@ void MainWindow::on_new_button_clicked() {
 }
 
 void MainWindow::on_load_button_clicked() {
-	//Start a file chooser dialog
-	Gtk::FileChooserDialog dialog("Choose scene file",
-			Gtk::FILE_CHOOSER_ACTION_OPEN);
-	dialog.set_transient_for(*this);
-
-	//Add response buttons the the dialog:
-	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	dialog.add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_OK);
-
-	//Add filters, so that only certain file types can be selected:
-
-	//.scene files
-	Glib::RefPtr<Gtk::FileFilter> filter_text = Gtk::FileFilter::create();
-	filter_text->set_name("Scene files");
-	filter_text->add_pattern("*.scene");
-	dialog.add_filter(filter_text);
-
-	Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
-	filter_any->set_name("Any files");
-	filter_any->add_pattern("*");
-	dialog.add_filter(filter_any);
-
-	//Show the dialog and wait for a user response:
-	int result = dialog.run();
-
-	//Handle the response:
-	switch (result) {
-	case (Gtk::RESPONSE_OK): {
-		//std::cout << "Open clicked." << std::endl;
-
-		//Notice that this is a std::string, not a Glib::ustring.
-		sceneFileName = dialog.get_filename();
-		//Enable the save buttons
-		saveCurButton.set_sensitive(true);
-		saveAsButton.set_sensitive(true);
-
+	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
+			m_TreeView.get_selection();
+	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
+	if (iter) {
+		Gtk::TreeModel::Row row = *iter;
+		//Get the file name to load from the row
+		string newSceneFile = scenesDir;
+		newSceneFile += row.get_value(m_Columns.fileNameColumn);
+		sceneFileName = newSceneFile;
 		/*
 		 * Parse the file
 		 */
@@ -238,27 +236,12 @@ void MainWindow::on_load_button_clicked() {
 		myScene.sendSceneToArdour();
 
 		/*
-		 * Update Scene Details in the GUI
-		 */
-		nameEntry.set_text(myScene.getName());
-
-		/*
 		 * Start listening for Ardour MIDI signals if we haven't already
 		 */
 		jack.setScene(&myScene);
 		showSceneDetails();
-		break;
 	}
-	case (Gtk::RESPONSE_CANCEL): {
-		//Well nothing
-		//std::cout << "Cancel clicked." << std::endl;
-		break;
-	}
-	default: {
-		std::cout << "Unexpected button clicked." << std::endl;
-		break;
-	}
-	}
+
 }
 
 void MainWindow::on_save_button_clicked() {
@@ -269,6 +252,7 @@ void MainWindow::on_save_button_clicked() {
 	 */
 	sceneParser.saveSceneToFile(&myScene, sceneFileName);
 	showSceneDetails();
+	scanAvailableSceneFiles();
 }
 
 void MainWindow::on_save_as_button_clicked() {
@@ -312,6 +296,7 @@ void MainWindow::on_save_as_button_clicked() {
 		//Enable the save button
 		saveCurButton.set_sensitive(true);
 		showSceneDetails();
+		scanAvailableSceneFiles();
 		break;
 	}
 	case (Gtk::RESPONSE_CANCEL): {
@@ -375,6 +360,7 @@ void MainWindow::on_save_to_fol_button_clicked() {
 	//Make the current scene the one we just saved
 	sceneFileName = fileName;
 	showSceneDetails();
+	scanAvailableSceneFiles();
 	saveCurButton.set_sensitive(true);
 }
 
@@ -388,6 +374,40 @@ void MainWindow::showSceneDetails() {
 	//Get the number of updated tracks
 	sprintf(updatedTracks, "%d", myScene.getUpdatedTracks());
 	updatedTotalLabel.set_text(updatedTracks);
+	nameEntry.set_text(myScene.getName());
 
 }
 
+void MainWindow::scanAvailableSceneFiles() {
+	//Create the Tree model:
+	m_refTreeModel = Gtk::ListStore::create(m_Columns);
+	m_TreeView.set_model(m_refTreeModel);
+	sceneFiles.clear();
+
+	DIR *d;
+	struct dirent *dir;
+	d = opendir(scenesDir.c_str());
+	if (d) {
+		while ((dir = readdir(d)) != NULL) {
+			//Add the scene files to the directory
+			string currentFile = dir->d_name;
+			//Is the file a scene file?
+			size_t found = currentFile.find(".scene");
+			if (found != std::string::npos) {
+				//Add the files to the scene file vector
+				sceneFiles.push_back(currentFile);
+			}
+		}
+
+		closedir(d);
+	}
+
+	//m_refTreeModel->clear();
+	for (unsigned int i = 0; i < sceneFiles.size(); i++) {
+		size_t found = sceneFiles[i].find(".scene");
+		string withoutExt = sceneFiles[i].substr(0, found);
+		Gtk::TreeModel::Row row = *(m_refTreeModel->append());
+		row[m_Columns.fileNamePresentationColumn] = withoutExt;
+		row[m_Columns.fileNameColumn] = sceneFiles[i];
+	}
+}
