@@ -18,8 +18,13 @@
 #include <vector>
 
 #define CC_MASK 0b10110000
+#define ARDOUR_MIDI_CTL_IN "ardour:MIDI control in"
+#define ARDOUR_MIDI_CTL_OUT "ardour:MIDI control out"
 
 #define MASTER_CC 119
+
+extern clock_t begin, end;
+extern double time_spent;
 
 class MainWindow;
 class Scene;

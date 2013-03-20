@@ -38,6 +38,22 @@ void Jack::activate() {
 		std::cout << "cannot activate client" << std::endl;
 		return;
 	}
+	/**
+	 * Here we automatically connect to ardour's midi ports if we can
+	 */
+	const char **ports;
+	ports = jack_get_ports(client, NULL, JACK_DEFAULT_MIDI_TYPE, 0);
+	int i = 0;
+	while (ports[i] != NULL) {
+		if (strcmp(ports[i], ARDOUR_MIDI_CTL_IN) == 0) {
+			jack_connect(client, jack_port_name(outputPort), ports[i]);
+		}
+		if (strcmp(ports[i], ARDOUR_MIDI_CTL_OUT) == 0) {
+			jack_connect(client, ports[i], jack_port_name(inputPort));
+		}
+		i++;
+	}
+
 }
 
 int Jack::staticProcess(jack_nframes_t nframes, void *arg) {
@@ -100,10 +116,18 @@ int Jack::process(jack_nframes_t nframes) {
 				}
 				//Take the midi event out of the queue to be written
 				eventVector.erase(eventVector.begin());
+				//check if we are now done
+				/*
+				if (eventVector.size() == 0) {
+					end = clock();
+					time_spent = (double)(end-begin)/CLOCKS_PER_SEC;
+					cout << time_spent << endl;
+				}
+				*/
 			}
 		}
 		//Give up the resource
-		pthread_mutex_unlock (&txMutex);
+		pthread_mutex_unlock(&txMutex);
 	}
 
 	return 0;

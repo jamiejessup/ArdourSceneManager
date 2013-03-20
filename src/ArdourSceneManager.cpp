@@ -23,6 +23,10 @@ pthread_mutex_t txMutex;
 /* Mutex for MIDI data being rx'd from Ardour */
 pthread_mutex_t rxMutex;
 
+/* time stuff to make sure I get the timing right */
+clock_t begin, end;
+double time_spent;
+
 int main(int argc, char *argv[]) {
 	// Init mutexes
 	pthread_mutex_init(&txMutex, NULL);

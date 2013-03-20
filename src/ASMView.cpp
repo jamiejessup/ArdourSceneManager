@@ -220,6 +220,9 @@ void MainWindow::on_new_button_clicked() {
 }
 
 void MainWindow::on_load_button_clicked() {
+	/* This stuff is used for timing verification
+	begin = clock();
+	*/
 	loadNewSceneFile();
 }
 
@@ -420,6 +423,7 @@ void MainWindow::loadNewSceneFile() {
 		 * Start listening for Ardour MIDI signals if we haven't already
 		 */
 		jack.setScene(&myScene);
+		saveCurButton.set_sensitive(true);
 		showSceneDetails();
 	}
 }
