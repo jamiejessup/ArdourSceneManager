@@ -71,8 +71,7 @@ class MainWindow: public Gtk::Window {
 
 	//Buttons:
 	Gtk::Button loadButton;
-	Gtk::Button saveToFolButton;
-	Gtk::Button saveCurButton;
+	Gtk::Button saveButton;
 	Gtk::Button closeButton;
 	Gtk::Button newButton;
 	Gtk::Button detailedViewButton;

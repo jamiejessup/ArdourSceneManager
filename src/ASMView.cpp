@@ -13,17 +13,16 @@ MainWindow::MainWindow() :
 				Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
-				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveToFolButton(
-				"Save To Scene Folder"), saveCurButton("Save Current Scene"), closeButton(
-				"Close"), newButton("New Scene From Ardour Session"), detailedViewButton(
+				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveButton(
+				"Save Scene"), closeButton("Close"), newButton(
+				"New Scene From Ardour Session"), detailedViewButton(
 				"Detailed View"), nameInfoLabel("Name:"), numTracksInfoLabel(
 				"Number of Tracks:"), numTracksLabel("0"), updatedTotalInfoLabel(
 				"Tracks Updated: "), updatedTotalLabel("0"), sceneFrame(
 				"Current Scene Details") {
 
 	jack.activate();
-	saveToFolButton.set_sensitive(false);
-	saveCurButton.set_sensitive(false);
+	saveButton.set_sensitive(false);
 	loadButton.set_sensitive(false);
 
 	// Set title and border of the window
@@ -47,11 +46,11 @@ MainWindow::MainWindow() :
 	seperator2.set_vexpand_set(false);
 
 	//Put the inner boxes and the separator in the outer box:
-	topLevelBox.pack_start(topBox,false,true,false);
-	topLevelBox.pack_start(seperator,false,true,false);
-	topLevelBox.pack_start(middleBox,true,true,false);
-	topLevelBox.pack_start(seperator2,false,true,false);
-	topLevelBox.pack_start(bottomBox,false,true,false);
+	topLevelBox.pack_start(topBox, false, true, false);
+	topLevelBox.pack_start(seperator, false, true, false);
+	topLevelBox.pack_start(middleBox, true, true, false);
+	topLevelBox.pack_start(seperator2, false, true, false);
+	topLevelBox.pack_start(bottomBox, false, true, false);
 
 	// Set the inner boxes' borders
 	bottomBox.set_border_width(10);
@@ -96,8 +95,7 @@ MainWindow::MainWindow() :
 	// Put buttons in the bottom Box:
 	bottomBox.pack_start(newButton);
 	bottomBox.pack_start(loadButton);
-	bottomBox.pack_start(saveCurButton);
-	bottomBox.pack_start(saveToFolButton);
+	bottomBox.pack_start(saveButton);
 	bottomBox.pack_start(closeButton);
 
 	// Make the button the default widget
@@ -109,12 +107,10 @@ MainWindow::MainWindow() :
 			sigc::mem_fun(*this, &MainWindow::on_close_button_clicked));
 	loadButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_load_button_clicked));
-	saveCurButton.signal_clicked().connect(
+	saveButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_save_button_clicked));
 	newButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_new_button_clicked));
-	saveToFolButton.signal_clicked().connect(
-			sigc::mem_fun(*this, &MainWindow::on_save_to_fol_button_clicked));
 
 	//Connect the signals of rows in the tree view for double click and enter
 	m_TreeView.signal_row_activated().connect(
@@ -188,8 +184,7 @@ void MainWindow::on_new_button_clicked() {
 		sessionHandler.init(dialog.get_filename(), &myScene);
 
 		//Enable save and save as buttons
-		saveToFolButton.set_sensitive(true);
-		saveCurButton.set_sensitive(false);
+		saveButton.set_sensitive(false);
 		loadButton.set_sensitive(true);
 
 		/*
@@ -230,17 +225,6 @@ void MainWindow::on_load_button_clicked() {
 void MainWindow::on_save_button_clicked() {
 	//Get the scene name
 	myScene.setName(nameEntry.get_text());
-	/**
-	 * Save the scene to the file
-	 */
-	sceneParser.saveSceneToFile(&myScene, sceneFileName);
-	showSceneDetails();
-	scanAvailableSceneFiles();
-}
-
-void MainWindow::on_save_to_fol_button_clicked() {
-	//Get the scene name
-	myScene.setName(nameEntry.get_text());
 
 	//bool ok = false;
 	string fileName = scenesDir;
@@ -257,7 +241,6 @@ void MainWindow::on_save_to_fol_button_clicked() {
 	sceneFileName = fileName;
 	showSceneDetails();
 	scanAvailableSceneFiles();
-	saveCurButton.set_sensitive(true);
 }
 
 void MainWindow::showSceneDetails() {
@@ -338,7 +321,7 @@ void MainWindow::loadNewSceneFile() {
 		 * Start listening for Ardour MIDI signals if we haven't already
 		 */
 		jack.setScene(&myScene);
-		saveCurButton.set_sensitive(true);
+		saveButton.set_sensitive(true);
 		showSceneDetails();
 	}
 }
