@@ -29,6 +29,7 @@
 #include "JackMIDI/jackMIDI.h"
 #include <iostream>
 #include <stdlib.h>
+#include <cstdio>
 #include <dirent.h>
 
 class MainWindow: public Gtk::Window {
@@ -41,6 +42,8 @@ class MainWindow: public Gtk::Window {
 	void on_save_button_clicked();
 	void on_save_to_fol_button_clicked();
 	void on_scene_file_activated(const Gtk::TreeModel::Path &, Gtk::TreeViewColumn*);
+	void on_scene_file_selection_changed();
+	void on_remove_button_clicked();
 
 	//Jack MIDI Handler
 	Jack jack;
@@ -74,7 +77,7 @@ class MainWindow: public Gtk::Window {
 	Gtk::Button saveButton;
 	Gtk::Button closeButton;
 	Gtk::Button newButton;
-	Gtk::Button detailedViewButton;
+	Gtk::Button removeButton;
 
 	//Information Text
 	Gtk::Label nameInfoLabel;

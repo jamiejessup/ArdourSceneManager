@@ -15,15 +15,15 @@ MainWindow::MainWindow() :
 				Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
 				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveButton(
 				"Save Scene"), closeButton("Close"), newButton(
-				"New Scene From Ardour Session"), detailedViewButton(
-				"Detailed View"), nameInfoLabel("Name:"), numTracksInfoLabel(
-				"Number of Tracks:"), numTracksLabel("0"), updatedTotalInfoLabel(
-				"Tracks Updated: "), updatedTotalLabel("0"), sceneFrame(
-				"Current Scene Details") {
+				"New Scene From Ardour Session"), removeButton("Remove Scene"), nameInfoLabel(
+				"Name:"), numTracksInfoLabel("Number of Tracks:"), numTracksLabel(
+				"0"), updatedTotalInfoLabel("Tracks Updated: "), updatedTotalLabel(
+				"0"), sceneFrame("Current Scene Details") {
 
 	jack.activate();
 	saveButton.set_sensitive(false);
 	loadButton.set_sensitive(false);
+	removeButton.set_sensitive(false);
 
 	// Set title and border of the window
 	set_title("Ardour Scene Manager");
@@ -96,6 +96,7 @@ MainWindow::MainWindow() :
 	bottomBox.pack_start(newButton);
 	bottomBox.pack_start(loadButton);
 	bottomBox.pack_start(saveButton);
+	bottomBox.pack_start(removeButton);
 	bottomBox.pack_start(closeButton);
 
 	// Make the button the default widget
@@ -111,10 +112,18 @@ MainWindow::MainWindow() :
 			sigc::mem_fun(*this, &MainWindow::on_save_button_clicked));
 	newButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_new_button_clicked));
+	removeButton.signal_clicked().connect(
+				sigc::mem_fun(*this, &MainWindow::on_remove_button_clicked));
+
 
 	//Connect the signals of rows in the tree view for double click and enter
 	m_TreeView.signal_row_activated().connect(
 			sigc::mem_fun(*this, &MainWindow::on_scene_file_activated));
+	//Connect the signals of rows in the tree view changed selection
+	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
+			m_TreeView.get_selection();
+	refTreeSelection->signal_changed().connect(
+			sigc::mem_fun(*this, &MainWindow::on_scene_file_selection_changed));
 
 	// Show all children of the window
 	show_all_children();
@@ -183,10 +192,6 @@ void MainWindow::on_new_button_clicked() {
 		 */
 		sessionHandler.init(dialog.get_filename(), &myScene);
 
-		//Enable save and save as buttons
-		saveButton.set_sensitive(false);
-		loadButton.set_sensitive(true);
-
 		/*
 		 * Start listening for Ardour MIDI signals
 		 */
@@ -195,6 +200,7 @@ void MainWindow::on_new_button_clicked() {
 		/*
 		 * Update the GUI layout
 		 */
+		saveButton.set_sensitive(true);
 
 		detailGrid.set_sensitive(true);
 		showSceneDetails();
@@ -208,7 +214,7 @@ void MainWindow::on_new_button_clicked() {
 		break;
 	}
 	default: {
-		std::cout << "Unexpected button clicked." << std::endl;
+		//haha nothing
 		break;
 	}
 	}
@@ -241,6 +247,30 @@ void MainWindow::on_save_button_clicked() {
 	sceneFileName = fileName;
 	showSceneDetails();
 	scanAvailableSceneFiles();
+}
+
+void MainWindow::on_remove_button_clicked() {
+	/*
+	 * Remove the selected file
+	 */
+	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
+			m_TreeView.get_selection();
+	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
+	if (iter) {
+		Gtk::TreeModel::Row row = *iter;
+		//Get the file name to remove from the row
+		string sceneFileToRemove = scenesDir;
+		sceneFileToRemove += row.get_value(m_Columns.fileNameColumn);
+
+		//Remove the file
+		std::remove(sceneFileToRemove.c_str());
+	}
+
+	/*
+	 * Re-scan the available scene files
+	 */
+	scanAvailableSceneFiles();
+
 }
 
 void MainWindow::showSceneDetails() {
@@ -294,6 +324,22 @@ void MainWindow::scanAvailableSceneFiles() {
 void MainWindow::on_scene_file_activated(const Gtk::TreeModel::Path &,
 		Gtk::TreeViewColumn*) {
 	loadNewSceneFile();
+}
+
+void MainWindow::on_scene_file_selection_changed() {
+	/*
+	 * If something is selected enable load and remove
+	 */
+	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
+			m_TreeView.get_selection();
+	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
+	if (iter) {
+		loadButton.set_sensitive(true);
+		removeButton.set_sensitive(true);
+	} else {
+		loadButton.set_sensitive(false);
+		removeButton.set_sensitive(false);
+	}
 }
 
 void MainWindow::loadNewSceneFile() {
