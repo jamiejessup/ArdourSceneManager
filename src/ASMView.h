@@ -27,7 +27,6 @@
 #include "SceneParser/SceneParser.h"
 #include "ArdourSessionParser/ArdourSession.h"
 #include "JackMIDI/jackMIDI.h"
-#include "FileNameDialog/FileNameDialog.h"
 #include <iostream>
 #include <stdlib.h>
 #include <dirent.h>
@@ -38,7 +37,6 @@ class MainWindow: public Gtk::Window {
 	//Signal handlers:
 	void on_new_button_clicked();
 	void on_load_button_clicked();
-	void on_save_as_button_clicked();
 	void on_close_button_clicked();
 	void on_save_button_clicked();
 	void on_save_to_fol_button_clicked();
@@ -64,8 +62,6 @@ class MainWindow: public Gtk::Window {
 
 	//Child widgets:
 
-	//File name chooser dialog
-	FileNameDialog fileNameDialog;
 
 	//Boxes and organization stuff:
 	Gtk::Box topLevelBox, topBox, middleBox,bottomBox, frameBox;
@@ -77,7 +73,6 @@ class MainWindow: public Gtk::Window {
 	Gtk::Button loadButton;
 	Gtk::Button saveToFolButton;
 	Gtk::Button saveCurButton;
-	Gtk::Button saveAsButton;
 	Gtk::Button closeButton;
 	Gtk::Button newButton;
 	Gtk::Button detailedViewButton;

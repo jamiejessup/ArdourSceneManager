@@ -14,9 +14,8 @@ MainWindow::MainWindow() :
 				Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
 				Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveToFolButton(
-				"Save To Scene Folder"), saveCurButton("Save Current Scene"), saveAsButton(
-				"Save Scene As .."), closeButton("Close"), newButton(
-				"New Scene From Ardour Session"), detailedViewButton(
+				"Save To Scene Folder"), saveCurButton("Save Current Scene"), closeButton(
+				"Close"), newButton("New Scene From Ardour Session"), detailedViewButton(
 				"Detailed View"), nameInfoLabel("Name:"), numTracksInfoLabel(
 				"Number of Tracks:"), numTracksLabel("0"), updatedTotalInfoLabel(
 				"Tracks Updated: "), updatedTotalLabel("0"), sceneFrame(
@@ -25,7 +24,6 @@ MainWindow::MainWindow() :
 	jack.activate();
 	saveToFolButton.set_sensitive(false);
 	saveCurButton.set_sensitive(false);
-	saveAsButton.set_sensitive(false);
 	loadButton.set_sensitive(false);
 
 	// Set title and border of the window
@@ -41,12 +39,19 @@ MainWindow::MainWindow() :
 	m_ScrolledWindow.set_size_request(10, 150);
 	m_ScrolledWindow.set_sensitive(false);
 
+	//Make the middle box the one that expands on resize
+	topBox.set_vexpand_set(false);
+	middleBox.set_vexpand_set(true);
+	bottomBox.set_vexpand_set(false);
+	seperator.set_vexpand_set(false);
+	seperator2.set_vexpand_set(false);
+
 	//Put the inner boxes and the separator in the outer box:
-	topLevelBox.pack_start(topBox);
-	topLevelBox.pack_start(seperator);
-	topLevelBox.pack_start(middleBox);
-	topLevelBox.pack_start(seperator2);
-	topLevelBox.pack_start(bottomBox);
+	topLevelBox.pack_start(topBox,false,true,false);
+	topLevelBox.pack_start(seperator,false,true,false);
+	topLevelBox.pack_start(middleBox,true,true,false);
+	topLevelBox.pack_start(seperator2,false,true,false);
+	topLevelBox.pack_start(bottomBox,false,true,false);
 
 	// Set the inner boxes' borders
 	bottomBox.set_border_width(10);
@@ -93,7 +98,6 @@ MainWindow::MainWindow() :
 	bottomBox.pack_start(loadButton);
 	bottomBox.pack_start(saveCurButton);
 	bottomBox.pack_start(saveToFolButton);
-	bottomBox.pack_start(saveAsButton);
 	bottomBox.pack_start(closeButton);
 
 	// Make the button the default widget
@@ -107,8 +111,6 @@ MainWindow::MainWindow() :
 			sigc::mem_fun(*this, &MainWindow::on_load_button_clicked));
 	saveCurButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_save_button_clicked));
-	saveAsButton.signal_clicked().connect(
-			sigc::mem_fun(*this, &MainWindow::on_save_as_button_clicked));
 	newButton.signal_clicked().connect(
 			sigc::mem_fun(*this, &MainWindow::on_new_button_clicked));
 	saveToFolButton.signal_clicked().connect(
@@ -187,7 +189,6 @@ void MainWindow::on_new_button_clicked() {
 
 		//Enable save and save as buttons
 		saveToFolButton.set_sensitive(true);
-		saveAsButton.set_sensitive(true);
 		saveCurButton.set_sensitive(false);
 		loadButton.set_sensitive(true);
 
@@ -221,8 +222,8 @@ void MainWindow::on_new_button_clicked() {
 
 void MainWindow::on_load_button_clicked() {
 	/* This stuff is used for timing verification
-	begin = clock();
-	*/
+	 begin = clock();
+	 */
 	loadNewSceneFile();
 }
 
@@ -237,105 +238,18 @@ void MainWindow::on_save_button_clicked() {
 	scanAvailableSceneFiles();
 }
 
-void MainWindow::on_save_as_button_clicked() {
-	//Open File chooser dialog
-	//Start a file chooser dialog
-	Gtk::FileChooserDialog dialog("Save scene file",
-			Gtk::FILE_CHOOSER_ACTION_SAVE);
-	dialog.set_transient_for(*this);
-
-	//Add response buttons the the dialog:
-	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	dialog.add_button(Gtk::Stock::SAVE_AS, Gtk::RESPONSE_OK);
-
-	//Add filters, so that only certain file types can be selected:
-
-	//.scene files
-	Glib::RefPtr<Gtk::FileFilter> filter_text = Gtk::FileFilter::create();
-	filter_text->set_name("Scene files");
-	filter_text->add_pattern("*.scene");
-	dialog.add_filter(filter_text);
-
-	Glib::RefPtr<Gtk::FileFilter> filter_any = Gtk::FileFilter::create();
-	filter_any->set_name("Any files");
-	filter_any->add_pattern("*");
-	dialog.add_filter(filter_any);
-
-	//Show the dialog and wait for a user response:
-	int result = dialog.run();
-
-	//Handle the response:
-	switch (result) {
-	case (Gtk::RESPONSE_OK): {
-		//std::cout << "Open clicked." << std::endl;
-
-		//Notice that this is a std::string, not a Glib::ustring.
-		sceneFileName = dialog.get_filename();
-		//Write the contents of the scene to file
-		//Get the scene name
-		myScene.setName(nameEntry.get_text());
-		sceneParser.saveSceneToFile(&myScene, sceneFileName);
-		//Enable the save button
-		saveCurButton.set_sensitive(true);
-		showSceneDetails();
-		scanAvailableSceneFiles();
-		break;
-	}
-	case (Gtk::RESPONSE_CANCEL): {
-		//Well nothing
-		//std::cout << "Cancel clicked." << std::endl;
-		break;
-	}
-	default: {
-		std::cout << "Unexpected button clicked." << std::endl;
-		break;
-	}
-	}
-
-}
-
 void MainWindow::on_save_to_fol_button_clicked() {
 	//Get the scene name
 	myScene.setName(nameEntry.get_text());
-	/*
-	 * Run a dialog to get a file name to save the file with
-	 */
-	//Add response buttons the the dialog:
-	fileNameDialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	fileNameDialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 
-	bool ok = false;
+	//bool ok = false;
 	string fileName = scenesDir;
-	do {
-		int result = fileNameDialog.run();
 
-		fileNameDialog.hide();
+	//append the name entry to the file name
+	fileName += myScene.getName();
 
-		//Handle the response:
-		switch (result) {
-		case (Gtk::RESPONSE_OK): {
-			string temp = fileNameDialog.getFileName();
-			if (temp.size() != 0) {
-				fileName.append(temp);
-				ok = true;
-			} else {
-				fileNameDialog.label.set_text("Be sure to specify a file name");
-			}
-			break;
-		}
-		case (Gtk::RESPONSE_CANCEL): {
-			ok = true;
-			break;
-		}
-		default: {
-			ok = true;
-			break;
-		}
-		}
-	} while (!ok);
-
-	/**
-	 * Save the scene to the scene folder
+	/*
+	 * Save to the scene foldr
 	 */
 	sceneParser.saveSceneToFile(&myScene, fileName);
 
@@ -394,7 +308,8 @@ void MainWindow::scanAvailableSceneFiles() {
 	}
 }
 
-void MainWindow::on_scene_file_activated(const Gtk::TreeModel::Path &, Gtk::TreeViewColumn*) {
+void MainWindow::on_scene_file_activated(const Gtk::TreeModel::Path &,
+		Gtk::TreeViewColumn*) {
 	loadNewSceneFile();
 }
 

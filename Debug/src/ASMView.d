@@ -769,8 +769,7 @@ src/ASMView.d: ../src/ASMView.cpp ../src/ASMView.h \
  ../src/Scene/Track/Track.h ../src/Scene/Track/../../JackMIDI/jackMIDI.h \
  ../src/SceneParser/SceneParser.h ../src/SceneParser/../Scene/Scene.h \
  ../src/ArdourSessionParser/ArdourSession.h \
- ../src/ArdourSessionParser/../Scene/Scene.h ../src/JackMIDI/jackMIDI.h \
- ../src/FileNameDialog/FileNameDialog.h
+ ../src/ArdourSessionParser/../Scene/Scene.h ../src/JackMIDI/jackMIDI.h
 
 ../src/ASMView.h:
 
@@ -2419,5 +2418,3 @@ src/ASMView.d: ../src/ASMView.cpp ../src/ASMView.h \
 ../src/ArdourSessionParser/../Scene/Scene.h:
 
 ../src/JackMIDI/jackMIDI.h:
-
-../src/FileNameDialog/FileNameDialog.h:

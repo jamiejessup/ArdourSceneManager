@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene>
+  <name name="band1"/>
+  <master gain="33"/>
+  <tracks>
+    <track1 gain="79" trackNo="1"/>
+    <track2 gain="0" trackNo="2"/>
+    <track3 gain="90" trackNo="3"/>
+    <track4 gain="0" trackNo="4"/>
+    <track5 gain="0" trackNo="5"/>
+  </tracks>
+</Scene>
