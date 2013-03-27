@@ -7,7 +7,7 @@
 #include "../ASMView.h"
 #include "../Scene/Scene.h"
 
-Jack::Jack(MainWindow* mw) :
+Jack::Jack(ASMView* mw) :
 		pASMView(mw) {
 	bpm = 120.0;
 
@@ -24,9 +24,9 @@ Jack::Jack(MainWindow* mw) :
 
 	jack_set_process_callback(client, staticProcess, static_cast<void*>(this));
 
-	pMyScene = NULL;
-
 	playbackIndex = 0;
+
+	activate();
 
 }
 
@@ -63,6 +63,8 @@ int Jack::staticProcess(jack_nframes_t nframes, void *arg) {
 int Jack::process(jack_nframes_t nframes) {
 	jack_midi_event_t in_event;
 
+	Scene* pMyScene = pASMView->getScene();
+
 	void *inputPortBuf = jack_port_get_buffer(inputPort, nframes);
 	void *outputPortBuf = jack_port_get_buffer(outputPort, nframes);
 
@@ -82,7 +84,7 @@ int Jack::process(jack_nframes_t nframes) {
 				int trackNo = (int) *(in_event.buffer + sizeof(char)) - 1;
 				char volume = *(in_event.buffer + 2 * sizeof(char));
 				if (pMyScene != NULL) {
-					if (trackNo == MASTER_CC) {
+					if (trackNo == MASTER_CC || trackNo == MASTER_CC2) {
 						pMyScene->master.SetTrackGain(volume);
 						pMyScene->master.SetModified();
 					} else {
@@ -118,12 +120,12 @@ int Jack::process(jack_nframes_t nframes) {
 				eventVector.erase(eventVector.begin());
 				//check if we are now done
 				/*
-				if (eventVector.size() == 0) {
-					end = clock();
-					time_spent = (double)(end-begin)/CLOCKS_PER_SEC;
-					cout << time_spent << endl;
-				}
-				*/
+				 if (eventVector.size() == 0) {
+				 end = clock();
+				 time_spent = (double)(end-begin)/CLOCKS_PER_SEC;
+				 cout << time_spent << endl;
+				 }
+				 */
 			}
 		}
 		//Give up the resource
@@ -131,10 +133,6 @@ int Jack::process(jack_nframes_t nframes) {
 	}
 
 	return 0;
-}
-
-void Jack::setScene(Scene *s) {
-	pMyScene = s;
 }
 
 float Jack::midiCCToFaderGain(char dataByte) {

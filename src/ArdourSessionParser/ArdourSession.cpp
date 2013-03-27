@@ -7,11 +7,11 @@
 
 #include "ArdourSession.h"
 
-ArdourSession::ArdourSession() {
+ArdourSessionParser::ArdourSessionParser() {
 
 }
 
-void ArdourSession::init(string fn, Scene* pScene) {
+void ArdourSessionParser::init(string fn, Scene* pScene) {
 	//clear all of the tracks in the current scene
 	pScene->tracks.clear();
 
@@ -47,11 +47,11 @@ void ArdourSession::init(string fn, Scene* pScene) {
 
 }
 
-ArdourSession::~ArdourSession() {
+ArdourSessionParser::~ArdourSessionParser() {
 	// TODO Auto-generated destructor stub
 }
 
-void ArdourSession::parseNodes(xmlNode * a_node, Scene *pScene) {
+void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 	xmlNode *cur_node = NULL;
 	string name;
 	char gain;
@@ -96,20 +96,20 @@ void ArdourSession::parseNodes(xmlNode * a_node, Scene *pScene) {
 	}
 }
 
-float ArdourSession::absTodB(float gain) {
+float ArdourSessionParser::absTodB(float gain) {
 	if (gain == 0) {
 		return -600;
 	} else
 		return 20 * log10(gain);
 }
 
-float ArdourSession::dBToCC(float gain) {
+float ArdourSessionParser::dBToCC(float gain) {
 	//Make up gain to make highest MIDI CC return +6db, and 99 return 0dB
 	static float makeUpGain = 6 / log10(127 / (float) 99.0);
 	return 99*pow(10,(gain/makeUpGain));
 }
 
-char ArdourSession::absToCC(float gain) {
+char ArdourSessionParser::absToCC(float gain) {
 	return (char) dBToCC(absTodB(gain));
 
 }

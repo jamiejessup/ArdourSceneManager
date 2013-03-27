@@ -32,7 +32,7 @@
 #include <cstdio>
 #include <dirent.h>
 
-class MainWindow: public Gtk::Window {
+class ASMView: public Gtk::Window {
 	void loadNewSceneFile();
 
 	//Signal handlers:
@@ -61,7 +61,7 @@ class MainWindow: public Gtk::Window {
 	vector<string> sceneFiles;
 
 	//Ardour Session Handler
-	ArdourSession sessionHandler;
+	ArdourSessionParser sessionHandler;
 
 	//Child widgets:
 
@@ -101,21 +101,22 @@ class MainWindow: public Gtk::Window {
 	};
 
 	//Tree view stuff to display the scene files that are in the folder
-	ModelColumns m_Columns;
+	ModelColumns scenesList;
 
-	Gtk::ScrolledWindow m_ScrolledWindow;
-	Gtk::TreeView m_TreeView;
-	Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
+	Gtk::ScrolledWindow scrolledWindow;
+	Gtk::TreeView treeView;
+	Glib::RefPtr<Gtk::ListStore> refTreeModel;
 
 	//Tree view filler
 	void scanAvailableSceneFiles();
 
 public:
-	MainWindow();
-	virtual ~MainWindow();
+	ASMView();
+	virtual ~ASMView();
 
 	//Shows scene details
 	void showSceneDetails();
+	Scene *getScene();
 };
 
 #endif //GTKMM_EXAMPLE_RADIOBUTTONS_H

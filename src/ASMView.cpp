@@ -8,7 +8,7 @@
 #include "ASMView.h"
 #include "JackMIDI/jackMIDI.h"
 
-MainWindow::MainWindow() :
+ASMView::ASMView() :
 		jack(this), myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(
 				Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
@@ -20,7 +20,6 @@ MainWindow::MainWindow() :
 				"0"), updatedTotalInfoLabel("Tracks Updated: "), updatedTotalLabel(
 				"0"), sceneFrame("Current Scene Details") {
 
-	jack.activate();
 	saveButton.set_sensitive(false);
 	loadButton.set_sensitive(false);
 	removeButton.set_sensitive(false);
@@ -34,9 +33,9 @@ MainWindow::MainWindow() :
 	add(topLevelBox);
 
 	//Add the TreeView, inside a ScrolledWindow
-	m_ScrolledWindow.add(m_TreeView);
-	m_ScrolledWindow.set_size_request(10, 150);
-	m_ScrolledWindow.set_sensitive(false);
+	scrolledWindow.add(treeView);
+	scrolledWindow.set_size_request(10, 150);
+	scrolledWindow.set_sensitive(false);
 
 	//Make the middle box the one that expands on resize
 	topBox.set_vexpand_set(false);
@@ -84,13 +83,13 @@ MainWindow::MainWindow() :
 	 * Add the tree view to the window with all scene files in the session's folder
 	 */
 	//Only show the scrollbars when they are necessary:
-	m_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	scrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	//Add the scrolled window
-	middleBox.pack_start(m_ScrolledWindow);
+	middleBox.pack_start(scrolledWindow);
 	//Add few black rows for now
 	//Add the TreeView's view columns:
-	m_TreeView.append_column("Scene File Name",
-			m_Columns.fileNamePresentationColumn);
+	treeView.append_column("Scene File Name",
+			scenesList.fileNamePresentationColumn);
 
 	// Put buttons in the bottom Box:
 	bottomBox.pack_start(newButton);
@@ -105,39 +104,39 @@ MainWindow::MainWindow() :
 
 	// Connect the clicked signals of buttons
 	closeButton.signal_clicked().connect(
-			sigc::mem_fun(*this, &MainWindow::on_close_button_clicked));
+			sigc::mem_fun(*this, &ASMView::on_close_button_clicked));
 	loadButton.signal_clicked().connect(
-			sigc::mem_fun(*this, &MainWindow::on_load_button_clicked));
+			sigc::mem_fun(*this, &ASMView::on_load_button_clicked));
 	saveButton.signal_clicked().connect(
-			sigc::mem_fun(*this, &MainWindow::on_save_button_clicked));
+			sigc::mem_fun(*this, &ASMView::on_save_button_clicked));
 	newButton.signal_clicked().connect(
-			sigc::mem_fun(*this, &MainWindow::on_new_button_clicked));
+			sigc::mem_fun(*this, &ASMView::on_new_button_clicked));
 	removeButton.signal_clicked().connect(
-				sigc::mem_fun(*this, &MainWindow::on_remove_button_clicked));
+				sigc::mem_fun(*this, &ASMView::on_remove_button_clicked));
 
 
 	//Connect the signals of rows in the tree view for double click and enter
-	m_TreeView.signal_row_activated().connect(
-			sigc::mem_fun(*this, &MainWindow::on_scene_file_activated));
+	treeView.signal_row_activated().connect(
+			sigc::mem_fun(*this, &ASMView::on_scene_file_activated));
 	//Connect the signals of rows in the tree view changed selection
 	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
-			m_TreeView.get_selection();
+			treeView.get_selection();
 	refTreeSelection->signal_changed().connect(
-			sigc::mem_fun(*this, &MainWindow::on_scene_file_selection_changed));
+			sigc::mem_fun(*this, &ASMView::on_scene_file_selection_changed));
 
 	// Show all children of the window
 	show_all_children();
 
 }
 
-MainWindow::~MainWindow() {
+ASMView::~ASMView() {
 }
 
-void MainWindow::on_close_button_clicked() {
+void ASMView::on_close_button_clicked() {
 	hide(); //to close the application.
 }
 
-void MainWindow::on_new_button_clicked() {
+void ASMView::on_new_button_clicked() {
 	//Start a file chooser dialog
 	Gtk::FileChooserDialog dialog("Choose Ardour Session",
 			Gtk::FILE_CHOOSER_ACTION_OPEN);
@@ -193,18 +192,13 @@ void MainWindow::on_new_button_clicked() {
 		sessionHandler.init(dialog.get_filename(), &myScene);
 
 		/*
-		 * Start listening for Ardour MIDI signals
-		 */
-		jack.setScene(&myScene);
-
-		/*
 		 * Update the GUI layout
 		 */
 		saveButton.set_sensitive(true);
 
 		detailGrid.set_sensitive(true);
 		showSceneDetails();
-		m_ScrolledWindow.set_sensitive(true);
+		scrolledWindow.set_sensitive(true);
 		scanAvailableSceneFiles();
 		break;
 	}
@@ -221,14 +215,14 @@ void MainWindow::on_new_button_clicked() {
 
 }
 
-void MainWindow::on_load_button_clicked() {
+void ASMView::on_load_button_clicked() {
 	/* This stuff is used for timing verification
 	 begin = clock();
 	 */
 	loadNewSceneFile();
 }
 
-void MainWindow::on_save_button_clicked() {
+void ASMView::on_save_button_clicked() {
 	//Get the scene name
 	myScene.setName(nameEntry.get_text());
 
@@ -249,18 +243,18 @@ void MainWindow::on_save_button_clicked() {
 	scanAvailableSceneFiles();
 }
 
-void MainWindow::on_remove_button_clicked() {
+void ASMView::on_remove_button_clicked() {
 	/*
 	 * Remove the selected file
 	 */
 	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
-			m_TreeView.get_selection();
+			treeView.get_selection();
 	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		//Get the file name to remove from the row
 		string sceneFileToRemove = scenesDir;
-		sceneFileToRemove += row.get_value(m_Columns.fileNameColumn);
+		sceneFileToRemove += row.get_value(scenesList.fileNameColumn);
 
 		//Remove the file
 		std::remove(sceneFileToRemove.c_str());
@@ -273,7 +267,7 @@ void MainWindow::on_remove_button_clicked() {
 
 }
 
-void MainWindow::showSceneDetails() {
+void ASMView::showSceneDetails() {
 	char numTracks[5];
 	char updatedTracks[5];
 	sprintf(numTracks, "%d",
@@ -287,10 +281,10 @@ void MainWindow::showSceneDetails() {
 
 }
 
-void MainWindow::scanAvailableSceneFiles() {
+void ASMView::scanAvailableSceneFiles() {
 	//Create the Tree model:
-	m_refTreeModel = Gtk::ListStore::create(m_Columns);
-	m_TreeView.set_model(m_refTreeModel);
+	refTreeModel = Gtk::ListStore::create(scenesList);
+	treeView.set_model(refTreeModel);
 	sceneFiles.clear();
 
 	DIR *d;
@@ -315,23 +309,23 @@ void MainWindow::scanAvailableSceneFiles() {
 	for (unsigned int i = 0; i < sceneFiles.size(); i++) {
 		size_t found = sceneFiles[i].find(".scene");
 		string withoutExt = sceneFiles[i].substr(0, found);
-		Gtk::TreeModel::Row row = *(m_refTreeModel->append());
-		row[m_Columns.fileNamePresentationColumn] = withoutExt;
-		row[m_Columns.fileNameColumn] = sceneFiles[i];
+		Gtk::TreeModel::Row row = *(refTreeModel->append());
+		row[scenesList.fileNamePresentationColumn] = withoutExt;
+		row[scenesList.fileNameColumn] = sceneFiles[i];
 	}
 }
 
-void MainWindow::on_scene_file_activated(const Gtk::TreeModel::Path &,
+void ASMView::on_scene_file_activated(const Gtk::TreeModel::Path &,
 		Gtk::TreeViewColumn*) {
 	loadNewSceneFile();
 }
 
-void MainWindow::on_scene_file_selection_changed() {
+void ASMView::on_scene_file_selection_changed() {
 	/*
 	 * If something is selected enable load and remove
 	 */
 	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
-			m_TreeView.get_selection();
+			treeView.get_selection();
 	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
 	if (iter) {
 		loadButton.set_sensitive(true);
@@ -342,15 +336,15 @@ void MainWindow::on_scene_file_selection_changed() {
 	}
 }
 
-void MainWindow::loadNewSceneFile() {
+void ASMView::loadNewSceneFile() {
 	Glib::RefPtr<Gtk::TreeSelection> refTreeSelection =
-			m_TreeView.get_selection();
+			treeView.get_selection();
 	Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
 	if (iter) {
 		Gtk::TreeModel::Row row = *iter;
 		//Get the file name to load from the row
 		string newSceneFile = scenesDir;
-		newSceneFile += row.get_value(m_Columns.fileNameColumn);
+		newSceneFile += row.get_value(scenesList.fileNameColumn);
 		sceneFileName = newSceneFile;
 
 		/*
@@ -363,11 +357,11 @@ void MainWindow::loadNewSceneFile() {
 		 */
 		myScene.sendSceneToArdour();
 
-		/*
-		 * Start listening for Ardour MIDI signals if we haven't already
-		 */
-		jack.setScene(&myScene);
 		saveButton.set_sensitive(true);
 		showSceneDetails();
 	}
+}
+
+Scene *ASMView::getScene(){
+	return &myScene;
 }
