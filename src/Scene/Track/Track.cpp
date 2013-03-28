@@ -17,17 +17,17 @@ Track::Track(char newGain) {
 	modified = false;
 }
 
-void Track::SetTrackGain(char newGain) {
+void Track::setTrackGain(char newGain) {
 	pthread_mutex_lock(&rxMutex);
 	gain = newGain;
 	pthread_mutex_unlock(&rxMutex);
 }
 
-char Track::GetTrackGain(void) {
+char Track::getTrackGain(void) {
 	return gain;
 }
 
-void Track::SendTrack(Jack *pJack, int destTrack) {
+void Track::sendTrack(Jack *pJack, int destTrack) {
 	char *data = new char[3];
 	data[0] = CC_MASK;
 	data[1] = (char) destTrack;
@@ -37,12 +37,12 @@ void Track::SendTrack(Jack *pJack, int destTrack) {
 	pthread_mutex_unlock(&txMutex);
 }
 
-void Track::SetModified(bool mod) {
+void Track::setModified(bool mod) {
 	pthread_mutex_lock(&rxMutex);
 	modified = mod;
 	pthread_mutex_unlock(&rxMutex);
 }
 
-bool Track::GetModified() {
+bool Track::getModified() {
 	return modified;
 }

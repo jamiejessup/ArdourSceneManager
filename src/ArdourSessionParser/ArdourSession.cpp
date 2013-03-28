@@ -84,7 +84,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 						if (property == NULL) {
 							pScene->tracks.push_back(Track(gain));
 						} else if (strcmp((char*) property, "MasterOut") == 0) {
-							pScene->master.SetTrackGain(gain);
+							pScene->master.setTrackGain(gain);
 						}
 
 					}

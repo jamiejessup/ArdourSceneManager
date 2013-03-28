@@ -21,7 +21,7 @@ void SceneParser::loadSceneFromFile(Scene *destScene, string fileName) {
 	/*
 	 * Re-initliaize master
 	 */
-	destScene->master.SetModified(false);
+	destScene->master.setModified(false);
 	/*
 	 * Re initialize all tracks
 	 */
@@ -72,7 +72,7 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
 			}
 			if (property != NULL) {
 				if (strcmp((char*) cur_node->name, "master") == 0) {
-					destScene->master.SetTrackGain(
+					destScene->master.setTrackGain(
 							(char) atoi((char*) property));
 				}
 				if (trackNo != NULL) {
@@ -127,7 +127,7 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
 	 */
 	node = xmlNewChild(root_node, NULL, BAD_CAST "master", NULL);
 	// Its level
-	sprintf(gainStr, "%d", (int) sourceScene->master.GetTrackGain());
+	sprintf(gainStr, "%d", (int) sourceScene->master.getTrackGain());
 	xmlNewProp(node, BAD_CAST "gain", BAD_CAST gainStr);
 	/*
 	 * The Tracks
@@ -137,7 +137,7 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
 	for (i = 0; i < (int) sourceScene->tracks.size(); i++) {
 		sprintf(buff, "track%d", i + 1);
 		sprintf(trackNoStr, "%d", i + 1);
-		sprintf(gainStr, "%d", (int) sourceScene->tracks[i].GetTrackGain());
+		sprintf(gainStr, "%d", (int) sourceScene->tracks[i].getTrackGain());
 		node = xmlNewChild(groupNode, NULL, BAD_CAST buff, NULL);
 		xmlNewProp(node, BAD_CAST "gain", BAD_CAST gainStr);
 		xmlNewProp(node, BAD_CAST "trackNo", BAD_CAST trackNoStr);
@@ -158,8 +158,8 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
 	 */
 	xmlMemoryDump();
 
-	sourceScene->master.SetModified(false);
+	sourceScene->master.setModified(false);
 	for (unsigned int i = 0; i < sourceScene->tracks.size(); i++) {
-		sourceScene->tracks[i].SetModified(false);
+		sourceScene->tracks[i].setModified(false);
 	}
 }

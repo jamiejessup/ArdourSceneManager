@@ -14,10 +14,10 @@ Scene::Scene(Jack * pJackIn) {
 
 void Scene::sendSceneToArdour() {
 	//Send vale of master track Gain
-	master.SendTrack(pJack, MASTER_CC);
+	master.sendTrack(pJack, MASTER_CC);
 	//Send the values of the rest for the tracks
 	for (int i = 0; i < (int) tracks.size(); i++) {
-		tracks[i].SendTrack(pJack, i+1);
+		tracks[i].sendTrack(pJack, i+1);
 	}
 }
 
@@ -32,10 +32,10 @@ string Scene::getName() {
 
 int Scene::getUpdatedTracks() {
 	int updated = 0;
-	if (master.GetModified())
+	if (master.getModified())
 		updated++;
 	for (int i = 0; i < (int) tracks.size(); i++) {
-		if (tracks[i].GetModified())
+		if (tracks[i].getModified())
 			updated++;
 	}
 	return updated;

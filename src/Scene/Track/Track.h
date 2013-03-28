@@ -24,11 +24,11 @@ public:
 	Track();
 	Track(char);
 	//Get and set methods
-	char GetTrackGain(void);
-	void SetTrackGain(char);
-	void SendTrack(Jack *pJack, int destTrack);
-	void SetModified(bool mod=true);
-	bool GetModified();
+	char getTrackGain(void);
+	void setTrackGain(char);
+	void sendTrack(Jack *pJack, int destTrack);
+	void setModified(bool mod=true);
+	bool getModified();
 };
 
 #endif /* TRACK_H_ */

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.2126618637">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.2126618637" moduleId="org.eclipse.cdt.core.settings" name="Debug">
@@ -23,7 +25,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1552296605" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1507270435" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1439825112" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.include.paths.1849373940" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.1849373940" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/jack"/>
 									<listOptionValue builtIn="false" value="/usr/include/atkmm-1.6"/>
 									<listOptionValue builtIn="false" value="/usr/include/giomm-2.4"/>
@@ -64,7 +66,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1226430757" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.1707892554" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
-								<option id="gnu.cpp.link.option.libs.1020153215" superClass="gnu.cpp.link.option.libs" valueType="libs">
+								<option id="gnu.cpp.link.option.libs.1020153215" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="jack"/>
 									<listOptionValue builtIn="false" value="gtkmm-3.0"/>
 									<listOptionValue builtIn="false" value="atkmm-1.6"/>
@@ -183,4 +185,5 @@
 			<resource resourceType="PROJECT" workspacePath="/ArdourSceneManager"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

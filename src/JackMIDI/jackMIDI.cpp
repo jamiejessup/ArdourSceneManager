@@ -85,11 +85,11 @@ int Jack::process(jack_nframes_t nframes) {
 				char volume = *(in_event.buffer + 2 * sizeof(char));
 				if (pMyScene != NULL) {
 					if (trackNo == MASTER_CC || trackNo == MASTER_CC2) {
-						pMyScene->master.SetTrackGain(volume);
-						pMyScene->master.SetModified();
+						pMyScene->master.setTrackGain(volume);
+						pMyScene->master.setModified();
 					} else {
-						pMyScene->tracks[trackNo].SetTrackGain(volume);
-						pMyScene->tracks[trackNo].SetModified();
+						pMyScene->tracks[trackNo].setTrackGain(volume);
+						pMyScene->tracks[trackNo].setModified();
 					}
 					if (pASMView != NULL) {
 						pASMView->showSceneDetails();
@@ -118,14 +118,6 @@ int Jack::process(jack_nframes_t nframes) {
 				}
 				//Take the midi event out of the queue to be written
 				eventVector.erase(eventVector.begin());
-				//check if we are now done
-				/*
-				 if (eventVector.size() == 0) {
-				 end = clock();
-				 time_spent = (double)(end-begin)/CLOCKS_PER_SEC;
-				 cout << time_spent << endl;
-				 }
-				 */
 			}
 		}
 		//Give up the resource
