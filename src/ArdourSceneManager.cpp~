@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include "stdio.h"
+#include "lo/lo.h"
 #include "ASMView.h"
 #include <gtkmm/application.h>
 #include <pthread.h>
