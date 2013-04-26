@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Ardour Scene Manager
+Type=Application
+Exec=ArdourSceneManager
+Terminal=false
+Icon=/usr/share/asm/icon.png
+Comment=Scene Management App
+NoDisplay=false
+Categories=AudioVideo;Audio;

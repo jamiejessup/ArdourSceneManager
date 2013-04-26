@@ -2,8 +2,8 @@
 
 VERSION='0.0.1'
 APPNAME='ArdourSceneManager'
-top = './'
-out = './.build'
+top = '.'
+out = 'build'
 
 def set_options(opt):
 	print '\nSetting build options & flags...'
@@ -39,18 +39,21 @@ def build(ctx):
   
   sourceDepends = 'JACK GTKMM XML'
   
-  #print 'Building ENGINE'
+  #print 'Building ASM'
   buildList = sourceList
   dependList = sourceDepends
-  
-  #print 'Depends list:',dependList
-  
-  
-  
+    
   main = ctx.new_task_gen(
     features = 'cxx cprogram',
     source = buildList,
     uselib = dependList,
     target = 'ArdourSceneManager' )
 
+  ctx.install_files('/usr/share/ardour3/midi_maps',
+		 ['extras/ArdourSceneManager.map'] )
+
+  ctx.install_as('/usr/share/asm/icon.png','extras/knob.png')
+
+  ctx.install_files('/usr/share/applications',
+		 ['extras/ArdourSceneManager.desktop'] )
 
