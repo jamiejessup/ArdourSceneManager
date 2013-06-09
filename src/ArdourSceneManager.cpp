@@ -1,12 +1,20 @@
-//============================================================================
-// Name        : ArdourSceneManager.cpp
-// Author      : Jamie Jessup, jessup.jamie@gmail.com
-// Version     : 0.1
-// Copyright   : GPL
-// Description : This is an application that manages scenes for use
-//				 with the Ardour to save and recall settings at the push of
-//				 a button.
-//============================================================================
+/*
+This file is part of Ardour Scene Manager.
+Copyright 2013, Jamie Jessup
+
+Ardour Scene Manager is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Ardour Scene Manager is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <iostream>
 #include "stdio.h"
@@ -21,6 +29,7 @@ pthread_mutex_t txMutex;
 
 /* Mutex for MIDI data being rx'd from Ardour */
 pthread_mutex_t rxMutex;
+
 
 /* time stuff to make sure I get the timing right */
 clock_t begin, end;
