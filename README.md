@@ -1,4 +1,4 @@
-ArdourSceneManager
+ardour_scene_manager
 ==================
 
 This program adds scene managament to Ardour externally so
