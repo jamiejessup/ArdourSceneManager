@@ -4,6 +4,8 @@
     <Binding channel="1" ctl="119" uri="/route/gain master"/>
     <!--Binding for the master mute switch-->
     <Binding channel="1" note="119" uri="/route/mute master"/>
+    <!--Binding for the master solo switch-->
+    <Binding channel="2" note="119" uri="/route/solo master"/>
     <!--Binding for the master pan direction-->
     <Binding channel="15" ctl="119" uri="/route/pandirection master"/>
     <!--Binding for the master pan width-->
