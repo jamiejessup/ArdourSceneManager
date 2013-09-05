@@ -30,6 +30,7 @@ class SceneParser {
 	//Saves all track parameters to a file with the same same as the scene.scene
 	void saveScene(Scene *sourceScene, string fileName);
 	void parseNodes(Scene *destScene, xmlNode *);
+    //Finds the track number of a track node, returns -1 on error
 public:
 	SceneParser();
 	virtual ~SceneParser();
