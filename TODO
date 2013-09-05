@@ -1,0 +1,7 @@
+- Parse Ardour Session file to find all sends and their level
+
+- Parse Ardour Session file to determine track solo and mute status
+
+- Implement an OSC Bridge
+
+- Write custom touch OSC Layouts
