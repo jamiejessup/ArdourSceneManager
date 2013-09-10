@@ -32,7 +32,7 @@ def build(ctx):
               'src/ASMView.cpp',
               'src/JackMIDI/jackMIDI.cpp',
               'src/Scene/Scene.cpp',
-              'src/Scene/Track/Track.cpp',
+              'src/Scene/Track.cpp',
               'src/SceneParser/SceneParser.cpp',
               'src/ArdourSessionParser/ArdourSession.cpp']
   

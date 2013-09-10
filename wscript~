@@ -47,7 +47,7 @@ def build(ctx):
     features = 'cxx cprogram',
     source = buildList,
     uselib = dependList,
-    target = 'ardour_scene_manager' )
+    target = 'ArdourSceneManager' )
 
   ctx.install_files('/usr/share/ardour3/midi_maps',
 		 ['extras/ArdourSceneManager.map'] )
