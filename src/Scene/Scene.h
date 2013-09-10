@@ -30,7 +30,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <libxml/tree.h>
 #include <string.h>
 #include "../JackMIDI/jackMIDI.h"
-#include "Track/Track.h"
+#include "Track.h"
 
 
 using namespace std;

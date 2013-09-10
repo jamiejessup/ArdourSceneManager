@@ -7,18 +7,20 @@ SOURCES += \
     src/ArdourSceneManager.cpp \
     src/SceneParser/SceneParser.cpp \
     src/Scene/Scene.cpp \
-    src/Scene/Track/Track.cpp \
+    src/Scene/Track.cpp \
     src/JackMIDI/jackMIDI.cpp \
-    src/ArdourSessionParser/ArdourSession.cpp
+    src/ArdourSessionParser/ArdourSession.cpp \
+    src/Scene/Send.cpp
 
 HEADERS += \
     src/ASMView.h \
     src/SceneParser/SceneParser.h \
     src/Scene/Scene.h \
-    src/Scene/Track/Track.h \
+    src/Scene/Track.h \
     src/JackMIDI/midi.h \
     src/JackMIDI/jackMIDI.h \
-    src/ArdourSessionParser/ArdourSession.h
+    src/ArdourSessionParser/ArdourSession.h \
+    src/Scene/Send.h
 
 OTHER_FILES += \
     extras/knob.png \

@@ -70,7 +70,6 @@ void SceneParser::loadSceneFromFile(Scene *destScene, string fileName) {
 void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
     xmlNode *cur_node = NULL;
     unsigned char *name;
-    int *trackNo;
     unsigned char *property;
 
     for (cur_node = a_node; cur_node; cur_node = cur_node->next) {

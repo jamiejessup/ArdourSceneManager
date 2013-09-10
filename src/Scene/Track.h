@@ -19,7 +19,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TRACK_H_
 #define TRACK_H_
 #include "stdio.h"
-#include "../../JackMIDI/jackMIDI.h"
+#include "../JackMIDI/jackMIDI.h"
 
 #define CC_MASK 0b10110000
 
@@ -30,6 +30,10 @@ extern pthread_mutex_t rxMutex;
 class Track {
 	char gain;
 	bool modified;
+    bool muted;
+    bool soloed;
+    char panDirection;
+    char panWidth;
 public:
 	Track();
 	Track(char);
