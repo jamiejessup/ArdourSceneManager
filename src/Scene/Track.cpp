@@ -28,6 +28,10 @@ Track::Track(char newGain) {
 	modified = false;
 }
 
+Track::Track(char newGain, std::vector<char> sendGains) {
+    //do nothing for now
+}
+
 void Track::setTrackGain(char newGain) {
 	pthread_mutex_lock(&rxMutex);
 	gain = newGain;

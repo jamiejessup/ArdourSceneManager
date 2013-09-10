@@ -20,6 +20,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #define TRACK_H_
 #include "stdio.h"
 #include "../JackMIDI/jackMIDI.h"
+#include "Send.h"
 
 #define CC_MASK 0b10110000
 
@@ -34,9 +35,11 @@ class Track {
     bool soloed;
     char panDirection;
     char panWidth;
+    std::vector<Send> sends;
 public:
 	Track();
-	Track(char);
+    Track(char gain);
+    Track(char gain, std::vector<char> sendGains);
 	//Get and set methods
 	char getTrackGain(void);
 	void setTrackGain(char);
