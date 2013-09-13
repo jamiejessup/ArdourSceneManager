@@ -35,15 +35,13 @@ class Track {
     bool soloed;
     char panDirection;
     char panWidth;
-    std::vector<Send> sends;
 public:
 	Track();
     Track(char gain);
-    Track(char gain, std::vector<char> sendGains);
 	//Get and set methods
 	char getTrackGain(void);
 	void setTrackGain(char);
-	void sendTrack(Jack *pJack, int destTrack);
+    void sendTrack(Jack *pJack, int destTrack);
 	void setModified(bool mod=true);
 	bool getModified();
 };
