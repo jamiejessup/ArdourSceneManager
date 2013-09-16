@@ -35,13 +35,15 @@ class Track {
     bool soloed;
     char panDirection;
     char panWidth;
+    char id;
 public:
-	Track();
-    Track(char gain);
+    Track();
+    Track(char id);
+    Track(char id, char gain);
 	//Get and set methods
 	char getTrackGain(void);
 	void setTrackGain(char);
-    void sendTrack(Jack *pJack, int destTrack);
+    void sendTrack(Jack *pJack);
 	void setModified(bool mod=true);
 	bool getModified();
 };

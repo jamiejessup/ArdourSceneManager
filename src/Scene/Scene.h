@@ -21,7 +21,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 
 #define ARDOUR_PORT "3819"
 #define UNITY_GAIN 0
-#define MASTER_URI 318
+#define MASTER_ID 318
 
 #include <iostream>
 #include <vector>

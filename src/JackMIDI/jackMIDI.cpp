@@ -90,9 +90,6 @@ int Jack::process(jack_nframes_t nframes) {
 	if (event_count > 0) {
 		for (unsigned int i = 0; i < event_count; i++) {
 			jack_midi_event_get(&in_event, inputPortBuf, i);
-            if ((int) *(in_event.buffer) == CC_MASK) {
-                std::cout << (int) *(in_event.buffer)  << std::endl;
-            }
 			if ((int) *(in_event.buffer) == CC_MASK) {
 				//Calculate track number from the CC #. Subtract one since vector of tracks is
 				//numbered starting at zero

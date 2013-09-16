@@ -19,15 +19,22 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "Track.h"
 
 Track::Track() {
+    id = 0;
+    gain = 0;
+    modified = false;
+}
+
+Track::Track(char newId) {
+    id = newId;
 	gain = 0;
 	modified = false;
 }
 
-Track::Track(char newGain) {
+Track::Track(char newId, char newGain) {
+    id = newId;
 	gain = newGain;
 	modified = false;
 }
-
 
 void Track::setTrackGain(char newGain) {
 	pthread_mutex_lock(&rxMutex);
@@ -39,10 +46,10 @@ char Track::getTrackGain(void) {
 	return gain;
 }
 
-void Track::sendTrack(Jack *pJack, int destTrack) {
+void Track::sendTrack(Jack *pJack) {
 	char *data = new char[3];
 	data[0] = CC_MASK;
-	data[1] = (char) destTrack;
+    data[1] = (char) id;
 	data[2] = gain;
 	pthread_mutex_lock(&txMutex);
 	pJack->eventVector.push_back(MidiEvent(data));

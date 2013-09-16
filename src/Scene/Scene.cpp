@@ -25,10 +25,10 @@ Scene::Scene(Jack * pJackIn) {
 
 void Scene::sendSceneToArdour() {
 	//Send vale of master track Gain
-	master.sendTrack(pJack, MASTER_CC);
+    master.sendTrack(pJack);
 	//Send the values of the rest for the tracks
 	for (int i = 0; i < (int) tracks.size(); i++) {
-		tracks[i].sendTrack(pJack, i+1);
+        tracks[i].sendTrack(pJack);
 	}
 }
 

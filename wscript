@@ -31,10 +31,10 @@ def build(ctx):
   sourceList=['src/ArdourSceneManager.cpp',
               'src/ASMView.cpp',
               'src/JackMIDI/jackMIDI.cpp',
-              'src/Scene/Scene.cpp',
               'src/Scene/ArdourControllable.cpp',
               'src/Scene/Track.cpp',
               'src/Scene/Send.cpp',
+              'src/Scene/Scene.cpp',
               'src/SceneParser/SceneParser.cpp',
               'src/ArdourSessionParser/ArdourSession.cpp']
   

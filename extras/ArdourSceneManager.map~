@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ArdourMIDIBindings version="1.0.0" name="Ardour Scene Manager">
     <!--Binding for the master track's gain-->
-    <Binding channel="1" ctl="119" uri="/route/gain 318"/>
+    <Binding channel="1" ctl="119" uri="/route/gain master"/>
     <!--Binding for the master pan direction-->
-    <Binding channel="15" ctl="119" uri="/route/pandirection 318"/>
+    <Binding channel="15" ctl="119" uri="/route/pandirection master"/>
     <!--Binding for the master pan width-->
-    <Binding channel="16" ctl="119" uri="/route/panwidth 318"/>
+    <Binding channel="16" ctl="119" uri="/route/panwidth master"/>
     <!--Binding for all remaining track gains-->
     <Binding channel="1" ctl="1" uri="/route/gain 1"/>
     <Binding channel="1" ctl="2" uri="/route/gain 2"/>

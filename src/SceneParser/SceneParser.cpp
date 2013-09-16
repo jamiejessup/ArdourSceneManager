@@ -70,7 +70,8 @@ void SceneParser::loadSceneFromFile(Scene *destScene, string fileName) {
 void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
     xmlNode *cur_node = NULL;
     unsigned char *name;
-    unsigned char *property;
+    unsigned char *trackNo;
+    unsigned char *trackGain;
 
     for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
         if (cur_node->type == XML_ELEMENT_NODE) {
@@ -88,26 +89,33 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
             if (strcmp((char*) cur_node->name, "gain") == 0) {
                 //Check that the current node's parent is "master"
                 if (strcmp((char*) cur_node->parent->name, "master") == 0) {
-                    property = xmlGetProp(cur_node, BAD_CAST "value");
-                    std::cout << "Master Gain is: " << property << std::endl;
+                    trackGain = xmlGetProp(cur_node, BAD_CAST "value");
                     destScene->master.setTrackGain(
-                                (char) atoi((char*) property));
+                                (char) atoi((char*) trackGain));
                 }
             }
 
             //Read all other track's gain
-            if (strcmp((char*) cur_node->name, "gain") == 0) {
-                //Check that the current node's parent is "master"
+            if (strcmp((char*) cur_node->name, "trackNo") == 0) {
+                //Check that the current node's parent is "track"
                 if (strcmp((char*) cur_node->parent->name, "track") == 0) {
-                    //find the track gain
-                    property = xmlGetProp(cur_node, BAD_CAST "value");
+                    //find the track number
+                    trackNo = xmlGetProp(cur_node, BAD_CAST "value");
+                    if (strcmp((char*) cur_node->next->next->name, "gain") == 0) {
+                        trackGain = xmlGetProp(cur_node->next->next, BAD_CAST "value");
+                        std::cout << "Track Gain is: " << trackGain << std::endl;
+
+                    }
+                    else
+                        trackGain = (unsigned char*) "0.0";
                     destScene->tracks.push_back(
-                                Track((char) atoi((char*) property)));
+                                Track((char) atoi((char*) trackNo), (char) atoi((char*) trackGain)));
                 }
             }
 
+
+            parseNodes(destScene, cur_node->children);
         }
-        parseNodes(destScene, cur_node->children);
     }
 }
 

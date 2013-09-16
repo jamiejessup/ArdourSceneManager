@@ -67,6 +67,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 	string name;
 	char gain;
 	unsigned char *property;
+    static int idCounter = 1;
 
 	for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
 		if (cur_node->type == XML_ELEMENT_NODE) {
@@ -93,7 +94,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 						property = xmlGetProp(cur_node->parent,
 								BAD_CAST "flags");
 						if (property == NULL) {
-							pScene->tracks.push_back(Track(gain));
+                            pScene->tracks.push_back(Track((char)idCounter++,gain));
 						} else if (strcmp((char*) property, "MasterOut") == 0) {
 							pScene->master.setTrackGain(gain);
 						}
