@@ -21,7 +21,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 
 #define ARDOUR_PORT "3819"
 #define UNITY_GAIN 0
-#define MASTER_ID 318
+#define MASTER_ID 119
 
 #include <iostream>
 #include <vector>
@@ -40,8 +40,8 @@ class Scene {
 	Jack *pJack;
 public:
 	//Tracks
-	Track master;
-	vector<Track> tracks;
+    Track master;
+    vector<Track> tracks;
 	//Constructor and destructor
 	Scene(Jack *pJack);
 	virtual ~Scene();

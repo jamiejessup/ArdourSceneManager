@@ -3,6 +3,10 @@
 
 #include "../JackMIDI/jackMIDI.h"
 
+//Reference to the mutexes
+extern pthread_mutex_t txMutex;
+extern pthread_mutex_t rxMutex;
+
 class ArdourControllable
 {
 protected:
@@ -10,8 +14,13 @@ protected:
     bool modified;
     char id;
 public:
+    char getGain(void);
+    void setGain(char);
+    void setModified(bool mod=true);
+    bool getModified();
+    ArdourControllable(char id);
     ArdourControllable();
-    ArdourControllable(char newGain);
+    ArdourControllable(char id, char newGain);
     virtual void sendToArdour(Jack *pJack) =0;
 };
 

@@ -97,11 +97,11 @@ int Jack::process(jack_nframes_t nframes) {
 				char volume = *(in_event.buffer + 2 * sizeof(char));
 				if (pMyScene != NULL) {
 					if (trackNo == MASTER_CC || trackNo == MASTER_CC2) {
-						pMyScene->master.setTrackGain(volume);
-						pMyScene->master.setModified();
+                        pMyScene->master.setGain(volume);
+                        pMyScene->master.setModified(true);
 					} else {
-						pMyScene->tracks[trackNo].setTrackGain(volume);
-						pMyScene->tracks[trackNo].setModified();
+                        pMyScene->tracks[trackNo].setGain(volume);
+                        pMyScene->tracks[trackNo].setModified(true);
 					}
 					if (pASMView != NULL) {
 						pASMView->showSceneDetails();

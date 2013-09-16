@@ -90,7 +90,7 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
                 //Check that the current node's parent is "master"
                 if (strcmp((char*) cur_node->parent->name, "master") == 0) {
                     trackGain = xmlGetProp(cur_node, BAD_CAST "value");
-                    destScene->master.setTrackGain(
+                    destScene->master.setGain(
                                 (char) atoi((char*) trackGain));
                 }
             }
@@ -103,8 +103,6 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
                     trackNo = xmlGetProp(cur_node, BAD_CAST "value");
                     if (strcmp((char*) cur_node->next->next->name, "gain") == 0) {
                         trackGain = xmlGetProp(cur_node->next->next, BAD_CAST "value");
-                        std::cout << "Track Gain is: " << trackGain << std::endl;
-
                     }
                     else
                         trackGain = (unsigned char*) "0.0";
@@ -158,7 +156,7 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
     xmlNodePtr masterNode = xmlNewChild(root_node, NULL, BAD_CAST "master", NULL);
     // Its level
     xmlNodePtr gainNode = xmlNewChild(masterNode, NULL, BAD_CAST "gain", NULL);
-    sprintf(gainStr, "%d", (int) sourceScene->master.getTrackGain());
+    sprintf(gainStr, "%d", (int) sourceScene->master.getGain());
     xmlNewProp(gainNode, BAD_CAST "value", BAD_CAST gainStr);
     /*
      * The Tracks
@@ -171,7 +169,7 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
         sprintf(trackNoStr, "%d", i + 1);
         xmlNewProp(trackNoNode, BAD_CAST "value", BAD_CAST trackNoStr);
         xmlNodePtr gainNode = xmlNewChild(trackNode, NULL, BAD_CAST "gain", NULL);
-        sprintf(gainStr, "%d", (int) sourceScene->tracks[i].getTrackGain());
+        sprintf(gainStr, "%d", (int) sourceScene->tracks[i].getGain());
         xmlNewProp(gainNode, BAD_CAST "value", BAD_CAST gainStr);
     }
 

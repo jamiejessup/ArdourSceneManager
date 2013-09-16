@@ -96,7 +96,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 						if (property == NULL) {
                             pScene->tracks.push_back(Track((char)idCounter++,gain));
 						} else if (strcmp((char*) property, "MasterOut") == 0) {
-							pScene->master.setTrackGain(gain);
+                            pScene->master.setGain(gain);
 						}
 
 					}
@@ -106,6 +106,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 		}
 		parseNodes(cur_node->children, pScene);
 	}
+    idCounter = 1;
 }
 
 float ArdourSessionParser::absTodB(float gain) {
