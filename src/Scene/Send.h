@@ -1,25 +1,21 @@
 #ifndef SEND_H
 #define SEND_H
 
-#include "../JackMIDI/jackMIDI.h"
+#include "ArdourControllable.h"
 
 //Reference to the mutexes
 extern pthread_mutex_t txMutex;
 extern pthread_mutex_t rxMutex;
 
-class Send
+class Send : public ArdourControllable
 {
-    char gain;
-    bool modified;
-
+    char trackId;
 public:
-    Send();
-    void sendSend(Jack *pJack, int sourceTrack, int sendNum);
-    //Get and set methods
-    char getTrackGain(void);
-    void setTrackGain(char);
-    void setModified(bool mod=true);
-    bool getModified();
+    void sendToArdour(Jack *pJack);
+    Send(char trackId);
+    Send(char trackId, char sendId);
+    Send(char trackId, char sendId, char gain);
+
 };
 
 #endif // SEND_H
