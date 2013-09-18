@@ -93,7 +93,7 @@ class ASMView: public Gtk::Window {
 	Gtk::Label nameInfoLabel;
 	Gtk::Entry nameEntry;
 	Gtk::Label numTracksInfoLabel;
-	Gtk::Label numTracksLabel;
+    Gtk::Label numTracksLabel;
 	Gtk::Label updatedTotalInfoLabel;
 	Gtk::Label updatedTotalLabel;
 	Gtk::Frame sceneFrame;

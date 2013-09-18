@@ -2,10 +2,26 @@
 <ArdourMIDIBindings version="1.0.0" name="Ardour Scene Manager">
     <!--Binding for the master track's gain-->
     <Binding channel="1" ctl="119" uri="/route/gain 318"/>
+    <!--Binding master's mute-->
+    <Binding channel="1" note="119" uri="/route/mute 318" momentary="yes"/>
     <!--Binding for the master pan direction-->
     <Binding channel="15" ctl="119" uri="/route/pandirection 318"/>
     <!--Binding for the master pan width-->
     <Binding channel="16" ctl="119" uri="/route/panwidth 318"/>
+    <!--Binding for master's sends-->
+    <Binding channel="2" ctl="119" uri="/route/send/gain 318 1"/>
+    <Binding channel="3" ctl="119" uri="/route/send/gain 318 2"/>
+    <Binding channel="4" ctl="119" uri="/route/send/gain 318 3"/>
+    <Binding channel="5" ctl="119" uri="/route/send/gain 318 4"/>
+    <Binding channel="6" ctl="119" uri="/route/send/gain 318 5"/>
+    <Binding channel="7" ctl="119" uri="/route/send/gain 318 6"/>
+    <Binding channel="8" ctl="119" uri="/route/send/gain 318 7"/>
+    <Binding channel="9" ctl="119" uri="/route/send/gain 318 8"/>
+    <Binding channel="10" ctl="119" uri="/route/send/gain 318 9"/>
+    <Binding channel="11" ctl="119" uri="/route/send/gain 318 10"/>
+    <Binding channel="12" ctl="119" uri="/route/send/gain 318 11"/>
+    <Binding channel="13" ctl="119" uri="/route/send/gain 318 12"/>
+    <Binding channel="14" ctl="119" uri="/route/send/gain 318 13"/>
     <!--Binding for all remaining track gains-->
     <Binding channel="1" ctl="1" uri="/route/gain 1"/>
     <Binding channel="1" ctl="2" uri="/route/gain 2"/>
