@@ -34,9 +34,10 @@ void SceneParser::loadSceneFromFile(Scene *destScene, string fileName) {
      */
     destScene->master.setModified(false);
     /*
-     * Re initialize all tracks
+     * Re initialize all tracks and busses
      */
     destScene->tracks.clear();
+    destScene->busses.clear();
 
     /*
      * this initialize the library and check potential ABI mismatches
@@ -106,10 +107,19 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
                     }
                     else
                         trackGain = (unsigned char*) "0.0";
-                    destScene->tracks.push_back(
-                                Track((char) atoi((char*) trackNo), (char) atoi((char*) trackGain)));
+                    //Parent's parent is tracks for tracks and busses for busses
+                    if(strcmp((char*) cur_node->parent->parent->name, "tracks") == 0) {
+                        destScene->tracks.push_back(
+                                    Track((char) atoi((char*) trackNo), (char) atoi((char*) trackGain)));
+                    }
+                    else if(strcmp((char*) cur_node->parent->parent->name, "busses") == 0) {
+                        destScene->busses.push_back(
+                                    Track((char) atoi((char*) trackNo), (char) atoi((char*) trackGain)));
+                    }
                 }
+
             }
+
 
 
             parseNodes(destScene, cur_node->children);
@@ -166,12 +176,28 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
     for (i = 0; i < (int) sourceScene->tracks.size(); i++) {
         xmlNodePtr trackNode = xmlNewChild(tracksGroupNode, NULL, BAD_CAST "track", NULL);
         xmlNodePtr trackNoNode = xmlNewChild(trackNode, NULL, BAD_CAST "trackNo", NULL);
-        sprintf(trackNoStr, "%d", i + 1);
+        sprintf(trackNoStr, "%d", (int) sourceScene->tracks[i].getId());
         xmlNewProp(trackNoNode, BAD_CAST "value", BAD_CAST trackNoStr);
         xmlNodePtr gainNode = xmlNewChild(trackNode, NULL, BAD_CAST "gain", NULL);
         sprintf(gainStr, "%d", (int) sourceScene->tracks[i].getGain());
         xmlNewProp(gainNode, BAD_CAST "value", BAD_CAST gainStr);
     }
+
+    /*
+     * The Busses
+     */
+    xmlNodePtr bussesGroupNode = xmlNewChild(root_node, NULL, BAD_CAST "busses", NULL);
+    // many Busses
+    for (i = 0; i < (int) sourceScene->busses.size(); i++) {
+        xmlNodePtr trackNode = xmlNewChild(bussesGroupNode, NULL, BAD_CAST "track", NULL);
+        xmlNodePtr trackNoNode = xmlNewChild(trackNode, NULL, BAD_CAST "trackNo", NULL);
+        sprintf(trackNoStr, "%d", (int) sourceScene->busses[i].getId());
+        xmlNewProp(trackNoNode, BAD_CAST "value", BAD_CAST trackNoStr);
+        xmlNodePtr gainNode = xmlNewChild(trackNode, NULL, BAD_CAST "gain", NULL);
+        sprintf(gainStr, "%d", (int) sourceScene->busses[i].getGain());
+        xmlNewProp(gainNode, BAD_CAST "value", BAD_CAST gainStr);
+    }
+
 
     /*
      * Dumping document to file

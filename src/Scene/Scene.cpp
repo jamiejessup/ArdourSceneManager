@@ -30,6 +30,10 @@ void Scene::sendSceneToArdour() {
 	for (int i = 0; i < (int) tracks.size(); i++) {
         tracks[i].sendToArdour(pJack);
 	}
+    //Send the values of the rest for the busses
+    for (int i = 0; i < (int) busses.size(); i++) {
+        busses[i].sendToArdour(pJack);
+    }
 }
 
 

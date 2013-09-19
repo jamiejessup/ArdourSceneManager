@@ -106,7 +106,6 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
                             }
                             else {
                                 pScene->busses.push_back(*track);
-                                std::cout << "Initialized bus with id " << (int) pScene->busses.back().getId() << " From " << idCounter << std::endl;
                             }
                         } else if (strcmp((char*) property, "MasterOut") == 0) {
                             pScene->master.setGain(gain);

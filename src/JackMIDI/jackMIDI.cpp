@@ -136,51 +136,46 @@ int Jack::process(jack_nframes_t nframes) {
                     }
                 }
             }
-            //Check to see if the first four most significant bits match CC_MASK
-            // The remaining four bits is the send id.
-            else if () {
-                //do stuff
-            }
-
-
-
-        }
-
-        //Try and lock the resource of data to be sent, if not next time
-        if (pthread_mutex_trylock(&txMutex) == 0) {
-            // go through data to be sent!
-            for (unsigned int i = 0; i < nframes; i++) {
-                if (eventVector.size() > 0) {
-                    MidiEvent midiEvent = eventVector.front();
-                    /* Write midi data to the buffer */
-                    unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
-                                                                    0, 3);
-
-                    if (buffer == 0) {
-                        cout << "Midi write failed -- write buffer == 0" << endl;
-                    } else {
-                        buffer[0] = midiEvent.data[0];
-                        buffer[1] = midiEvent.data[1];
-                        buffer[2] = midiEvent.data[2];
-                    }
-                    //Take the midi event out of the queue to be written
-                    eventVector.erase(eventVector.begin());
-                }
-            }
-            //Give up the resource
-            pthread_mutex_unlock(&txMutex);
         }
 
     }
-    return 0;
+    //Try and lock the resource of data to be sent, if not next time
+    if (pthread_mutex_trylock(&txMutex) == 0) {
+        // go through data to be sent!
+        for (unsigned int i = 0; i < nframes; i++) {
+            if (eventVector.size() > 0) {
+                MidiEvent midiEvent = eventVector.front();
+                /* Write midi data to the buffer */
+                unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
+                                                                0, 3);
+
+                if (buffer == 0) {
+                    cout << "Midi write failed -- write buffer == 0" << endl;
+                } else {
+                    buffer[0] = midiEvent.data[0];
+                    buffer[1] = midiEvent.data[1];
+                    buffer[2] = midiEvent.data[2];
+                }
+                //Take the midi event out of the queue to be written
+                eventVector.erase(eventVector.begin());
+            }
+        }
+        //Give up the resource
+        pthread_mutex_unlock(&txMutex);
+    }
+
+     return 0;
+
 }
 
-    float Jack::midiCCToFaderGain(char dataByte) {
-        //Make up gain to make highest MIDI CC return +6db, and 99 return 0dB
-        static float gain = 6 / log10(127 / (float) 99.0);
-        if (dataByte == 0) {
-            return -600;
-        } else
-            return gain * log10((int) dataByte / (float) 99.0);
-    }
+
+
+float Jack::midiCCToFaderGain(char dataByte) {
+    //Make up gain to make highest MIDI CC return +6db, and 99 return 0dB
+    static float gain = 6 / log10(127 / (float) 99.0);
+    if (dataByte == 0) {
+        return -600;
+    } else
+        return gain * log10((int) dataByte / (float) 99.0);
+}
 
