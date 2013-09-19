@@ -13,11 +13,13 @@ protected:
     char gain;
     bool modified;
     char id;
+    void setId(char);
 public:
     char getGain(void);
     void setGain(char);
     void setModified(bool mod=true);
     bool getModified();
+    char getId(void);
     ArdourControllable(char id);
     ArdourControllable();
     ArdourControllable(char id, char newGain);

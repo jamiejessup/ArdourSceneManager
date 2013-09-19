@@ -1,7 +1,3 @@
-- Modify default map for master sends
-
-- Parse Ardour Session file to find all sends and their level
-
 - Parse Ardour Session file to determine track solo and mute status
 
 - Write Scene file with boolean values

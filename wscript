@@ -34,6 +34,7 @@ def build(ctx):
               'src/Scene/ArdourControllable.cpp',
               'src/Scene/Track.cpp',
               'src/Scene/Send.cpp',
+              'src/Scene/Master.cpp',
               'src/Scene/Scene.cpp',
               'src/SceneParser/SceneParser.cpp',
               'src/ArdourSessionParser/ArdourSession.cpp']

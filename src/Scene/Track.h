@@ -2,6 +2,7 @@
 #define TRACK_H
 
 #include "ArdourControllable.h"
+#include "Send.h"
 
 class Track : public ArdourControllable
 {
@@ -10,6 +11,7 @@ class Track : public ArdourControllable
     char panDir;
     char panWidth;
 public:
+    std::vector<Send> sends;
     void setSoled(bool mod=true);
     bool getSoloed();
     void setMuted(bool mod=true);

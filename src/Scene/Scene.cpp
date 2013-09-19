@@ -43,13 +43,22 @@ string Scene::getName() {
 
 int Scene::getUpdatedTracks() {
 	int updated = 0;
-	if (master.getModified())
-		updated++;
 	for (int i = 0; i < (int) tracks.size(); i++) {
 		if (tracks[i].getModified())
 			updated++;
 	}
 	return updated;
+}
+
+int Scene::getUpdatedBusses() {
+    int updated = 0;
+    if (master.getModified())
+        updated++;
+    for (int i = 0; i < (int) busses.size(); i++) {
+        if (tracks[i].getModified())
+            updated++;
+    }
+    return updated;
 }
 
 Scene::~Scene() {

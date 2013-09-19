@@ -29,8 +29,10 @@ ASMView::ASMView() :
         "Save Scene"), closeButton("Close"), newButton(
         "New Scene From Ardour Session"), removeButton("Remove Scene"), nameInfoLabel(
         "Name:"), numTracksInfoLabel("Number of Tracks:"), numTracksLabel(
-        "0"), updatedTotalInfoLabel("Tracks Updated: "), updatedTotalLabel(
-        "0"), sceneFrame("Current Scene Details") {
+        "0"), updatedTracksInfoLabel("Tracks Updated: "), updatedTracksLabel(
+        "0"), numBussesInfoLabel("Number of Busses"), numBussesLabel("0"),
+    updatedBussesInfoLabel("Busses Updated"), updatedBussesLabel("0"),
+    sceneFrame("Current Scene Details") {
 
     saveButton.set_sensitive(false);
     loadButton.set_sensitive(false);
@@ -74,9 +76,17 @@ ASMView::ASMView() :
     detailGrid.attach_next_to(numTracksInfoLabel, nameInfoLabel,
                               Gtk::POS_BOTTOM, 1, 1);
     detailGrid.attach_next_to(numTracksLabel, nameEntry, Gtk::POS_BOTTOM, 1, 1);
-    detailGrid.attach_next_to(updatedTotalInfoLabel, numTracksInfoLabel,
+    detailGrid.attach_next_to(updatedTracksInfoLabel, numTracksInfoLabel,
                               Gtk::POS_BOTTOM, 1, 1);
-    detailGrid.attach_next_to(updatedTotalLabel, numTracksLabel,
+    detailGrid.attach_next_to(updatedTracksLabel, numTracksLabel,
+                              Gtk::POS_BOTTOM, 1, 1);
+    detailGrid.attach_next_to(numBussesInfoLabel, updatedTracksInfoLabel,
+                              Gtk::POS_BOTTOM, 1, 1);
+    detailGrid.attach_next_to(numBussesLabel, updatedTracksLabel,
+                              Gtk::POS_BOTTOM, 1, 1);
+    detailGrid.attach_next_to(updatedBussesInfoLabel, numBussesInfoLabel,
+                              Gtk::POS_BOTTOM, 1, 1);
+    detailGrid.attach_next_to(updatedBussesLabel, numBussesLabel,
                               Gtk::POS_BOTTOM, 1, 1);
     /* We will include a detailed view button in the next version
      detailGrid.attach_next_to(detailedViewButton, updatedTotalLabel,
@@ -280,15 +290,25 @@ void ASMView::on_remove_button_clicked() {
 }
 
 void ASMView::showSceneDetails() {
-    char numTracks[5];
-    char updatedTracks[5];
-    sprintf(numTracks, "%d",
-            (int) myScene.tracks.size()
-            + 1 /* Add 1 since there is ALWAYS A MASTER*/);
-    numTracksLabel.set_text(numTracks);
+    char num[5];
+    char updated[5];
+    //get num of tracks
+    sprintf(num, "%d",
+            (int) myScene.tracks.size());
+    numTracksLabel.set_text(num);
+
+    //get num of busses
+    sprintf(num, "%d", (int) myScene.busses.size() +1 /*Always a master bus*/);
+    numBussesLabel.set_text(num);
     //Get the number of updated tracks
-    sprintf(updatedTracks, "%d", myScene.getUpdatedTracks());
-    updatedTotalLabel.set_text(updatedTracks);
+    sprintf(updated, "%d", myScene.getUpdatedTracks());
+    updatedTracksLabel.set_text(updated);
+
+    //get num of updated busses
+    sprintf(updated, "%d", myScene.getUpdatedBusses());
+    updatedBussesLabel.set_text(updated);
+
+
     nameEntry.set_text(myScene.getName());
 
 }

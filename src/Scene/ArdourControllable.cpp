@@ -39,3 +39,11 @@ void ArdourControllable::setGain(char newGain) {
 char ArdourControllable::getGain(void) {
     return gain;
 }
+
+char ArdourControllable::getId(void) {
+    return id;
+}
+
+void ArdourControllable::setId(char newId) {
+    id = newId;
+}

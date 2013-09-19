@@ -11,7 +11,8 @@ SOURCES += \
     src/ArdourSessionParser/ArdourSession.cpp \
     src/Scene/Send.cpp \
     src/Scene/ArdourControllable.cpp \
-    src/Scene/Track.cpp
+    src/Scene/Track.cpp \
+    src/Scene/Master.cpp
 
 HEADERS += \
     src/ASMView.h \
@@ -22,7 +23,8 @@ HEADERS += \
     src/ArdourSessionParser/ArdourSession.h \
     src/Scene/Send.h \
     src/Scene/ArdourControllable.h \
-    src/Scene/Track.h
+    src/Scene/Track.h \
+    src/Scene/Master.h
 
 OTHER_FILES += \
     extras/knob.png \

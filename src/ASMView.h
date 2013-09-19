@@ -94,8 +94,12 @@ class ASMView: public Gtk::Window {
 	Gtk::Entry nameEntry;
 	Gtk::Label numTracksInfoLabel;
     Gtk::Label numTracksLabel;
-	Gtk::Label updatedTotalInfoLabel;
-	Gtk::Label updatedTotalLabel;
+    Gtk::Label updatedTracksInfoLabel;
+    Gtk::Label updatedTracksLabel;
+    Gtk::Label numBussesInfoLabel;
+    Gtk::Label numBussesLabel;
+    Gtk::Label updatedBussesInfoLabel;
+    Gtk::Label updatedBussesLabel;
 	Gtk::Frame sceneFrame;
 
 	//Tree model columns:

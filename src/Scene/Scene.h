@@ -31,6 +31,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "../JackMIDI/jackMIDI.h"
 #include "Track.h"
+#include "Master.h"
 
 
 using namespace std;
@@ -40,9 +41,10 @@ class Scene {
 	Jack *pJack;
 public:
 	//Tracks
-    Track master;
+    Master master;
     vector<Track> tracks;
-	//Constructor and destructor
+    vector<Track> busses;
+    //Constructor and destructor
 	Scene(Jack *pJack);
 	virtual ~Scene();
 	//Sends all track parameters to ardour with Jack MIDI
@@ -53,6 +55,7 @@ public:
 	string getName();
 	//Get the number of tracks that have been updated since thier initialization.
 	int getUpdatedTracks();
+    int getUpdatedBusses();
 };
 
 #endif /* SCENE_H_ */
