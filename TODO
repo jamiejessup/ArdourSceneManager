@@ -1,10 +1,10 @@
+- Test send feedback
+
 - Parse Ardour Session file to determine track solo and mute status
 
 - Write Scene file with boolean values
 
 - Write Scene file with panwidth and and pandirections
-
-- Write scene file with send gains
 
 - Implement an OSC Bridge
 

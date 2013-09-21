@@ -8,6 +8,9 @@ void Track::sendToArdour(Jack *pJack) {
     pthread_mutex_lock(&txMutex);
     pJack->eventVector.push_back(MidiEvent(data));
     pthread_mutex_unlock(&txMutex);
+    for(unsigned i = 0; i<sends.size(); i++) {
+        sends[i].sendToArdour(pJack);
+    }
 }
 
 void Track::setSoled(bool mod){

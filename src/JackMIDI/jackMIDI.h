@@ -27,6 +27,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 #define CC_MASK 0b10110000
+#define CC_NIBBLE 0b1011
 #define ARDOUR_MIDI_CTL_IN "ardour:MIDI control in"
 #define ARDOUR_MIDI_CTL_OUT "ardour:MIDI control out"
 

@@ -95,7 +95,10 @@ int Jack::process(jack_nframes_t nframes) {
             char id = *(in_event.buffer + sizeof(char));
             char gain = *(in_event.buffer + 2 * sizeof(char));
 
-            if ((int) *(in_event.buffer) == CC_MASK) {
+            char statusByte = *in_event.buffer >> 4;
+            char sendId = *in_event.buffer & 0x0F;
+
+            if (statusByte == CC_NIBBLE) {
                 //This is a message for master, a track, or a bus
                 bool found = false;
                 if (pMyScene != NULL) {
@@ -155,10 +158,12 @@ int Jack::process(jack_nframes_t nframes) {
                     buffer[0] = midiEvent.data[0];
                     buffer[1] = midiEvent.data[1];
                     buffer[2] = midiEvent.data[2];
+                    std::cout << "Hello" << std::endl;
                 }
                 //Take the midi event out of the queue to be written
                 eventVector.erase(eventVector.begin());
             }
+
         }
         //Give up the resource
         pthread_mutex_unlock(&txMutex);

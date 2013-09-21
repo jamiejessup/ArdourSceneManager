@@ -107,21 +107,22 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
                     }
                     else
                         trackGain = (unsigned char*) "0.0";
+
+                    Track * track;
+                    track = new Track((char) atoi((char*) trackNo),(char) atoi((char*) trackGain));
+
+                    getTrackSends(cur_node->parent,track,atoi((char*) trackNo));
+
                     //Parent's parent is tracks for tracks and busses for busses
                     if(strcmp((char*) cur_node->parent->parent->name, "tracks") == 0) {
-                        destScene->tracks.push_back(
-                                    Track((char) atoi((char*) trackNo), (char) atoi((char*) trackGain)));
+                        destScene->tracks.push_back(*track);
                     }
                     else if(strcmp((char*) cur_node->parent->parent->name, "busses") == 0) {
-                        destScene->busses.push_back(
-                                    Track((char) atoi((char*) trackNo), (char) atoi((char*) trackGain)));
+                        destScene->busses.push_back(*track);
                     }
                 }
 
             }
-
-
-
             parseNodes(destScene, cur_node->children);
         }
     }
@@ -144,10 +145,12 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
     int i;
     char gainStr[10];
     char trackNoStr[10];
+    char sendGainStr[10];
+    char sendNoStr[10];
 
     LIBXML_TEST_VERSION;
 
-    /*
+    /*(char) atoi((char*) trackGain)
      * Creates a new document, a node and set it as a root node
      */
 
@@ -181,6 +184,21 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
         xmlNodePtr gainNode = xmlNewChild(trackNode, NULL, BAD_CAST "gain", NULL);
         sprintf(gainStr, "%d", (int) sourceScene->tracks[i].getGain());
         xmlNewProp(gainNode, BAD_CAST "value", BAD_CAST gainStr);
+
+        if(sourceScene->tracks[i].sends.size() > 0) {
+            xmlNodePtr sendsGroupNode = xmlNewChild(tracksGroupNode, NULL, BAD_CAST "sends", NULL);
+            //The tracks sends
+            for(int j = 0; j < (int) sourceScene->tracks[i].sends.size(); j++) {
+                xmlNodePtr sendNode = xmlNewChild(sendsGroupNode, NULL, BAD_CAST "send", NULL);
+                xmlNodePtr sendNoNode = xmlNewChild(sendNode, NULL, BAD_CAST "sendNo", NULL);
+                sprintf(sendNoStr, "%d", (int) sourceScene->tracks[i].sends[j].getId());
+                xmlNewProp(sendNoNode, BAD_CAST "value", BAD_CAST sendNoStr);
+                xmlNodePtr sendGainNode = xmlNewChild(sendNode, NULL, BAD_CAST "gain", NULL);
+                sprintf(sendGainStr, "%d", (int) sourceScene->tracks[i].sends[j].getGain());
+                xmlNewProp(sendGainNode, BAD_CAST "value", BAD_CAST sendGainStr);
+            }
+        }
+
     }
 
     /*
@@ -204,7 +222,7 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
      */
     xmlSaveFormatFileEnc(fn.c_str(), doc, "UTF-8", 1);
 
-    /*
+    /*(char) atoi((char*) trackGain)
      *Free the global variables that may
      *have been allocated by the parser.
      */
@@ -217,6 +235,31 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
     sourceScene->master.setModified(false);
     for (unsigned int i = 0; i < sourceScene->tracks.size(); i++) {
         sourceScene->tracks[i].setModified(false);
+    }
+}
+
+void SceneParser::getTrackSends(xmlNode* a_node, Track * track, int trackId) {
+    xmlNode *cur_node = NULL;
+    unsigned char *sendNo;
+    unsigned char *gain;
+
+    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
+        if (cur_node->type == XML_ELEMENT_NODE) {
+            if(strcmp((char*) cur_node->name, "sendNo") == 0
+                    && strcmp((char*) cur_node->parent->name, "send") == 0) {
+                //find the track number
+                sendNo = xmlGetProp(cur_node, BAD_CAST "value");
+                if (strcmp((char*) cur_node->next->next->name, "gain") == 0) {
+                    gain = xmlGetProp(cur_node->next->next, BAD_CAST "value");
+                }
+                else
+                    gain = (unsigned char*) "0.0";
+                Send *send;
+                send = new Send((char)trackId,(char) atoi((char*) sendNo), (char) atoi((char*) gain));
+                track->sends.push_back(*send);
+            }
+            getTrackSends(cur_node->children,track,trackId);
+        }
     }
 }
 

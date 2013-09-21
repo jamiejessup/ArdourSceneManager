@@ -94,10 +94,10 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
                                               BAD_CAST "flags");
                         if (property == NULL) {
                             Track * track;
-                            track = new Track((char)idCounter++,gain);
+                            track = new Track((char)idCounter,gain);
 
                             //Find what sends are there for our track
-                            getTrackSends(cur_node,track,idCounter);
+                            getTrackSends(cur_node->parent->children,track,idCounter);
 
                             //Check if there is a mode property
                             //If it's not there we are a Bus
@@ -107,6 +107,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
                             else {
                                 pScene->busses.push_back(*track);
                             }
+                            idCounter++;
                         } else if (strcmp((char*) property, "MasterOut") == 0) {
                             pScene->master.setGain(gain);
                         }
@@ -146,6 +147,7 @@ void ArdourSessionParser::getTrackSends(xmlNode* a_node, Track * track, int trac
     static int sendCounter = 1;
     unsigned char *property;
     char gain;
+
 
     for (routeNode = a_node; routeNode; routeNode = routeNode->next) {
         if (routeNode->type == XML_ELEMENT_NODE) {
