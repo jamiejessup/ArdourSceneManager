@@ -96,43 +96,206 @@ int Jack::process(jack_nframes_t nframes) {
             char gain = *(in_event.buffer + 2 * sizeof(char));
 
             char statusByte = *in_event.buffer >> 4;
-            char sendId = *in_event.buffer & 0x0F;
+            char channel = *in_event.buffer & 0x0F;
 
             if (statusByte == CC_NIBBLE) {
-                //This is a message for master, a track, or a bus
-                bool found = false;
-                if (pMyScene != NULL) {
-                    if (id == MASTER_CC || id == MASTER_CC2) {
-                        pMyScene->master.setGain(gain);
-                        pMyScene->master.setModified(true);
-                        found = true;
-                        if (pASMView != NULL) {
-                            pASMView->showSceneDetails();
+                if(channel == 0) {
+                    //This is a message for master, a track, or a bus
+                    bool found = false;
+                    if (pMyScene != NULL) {
+                        if (id == MASTER_CC || id == MASTER_CC2) {
+                            pMyScene->master.setGain(gain);
+                            pMyScene->master.setModified(true);
+                            found = true;
+                            if (pASMView != NULL) {
+                                pASMView->showSceneDetails();
+                            }
                         }
-                    }
 
-                    if(!found) {
-                        for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
-                            if(id == pMyScene->tracks[i].getId()) {
-                                pMyScene->tracks[i].setGain(gain);
-                                pMyScene->tracks[i].setModified(true);
-                                found = true;
-                                if (pASMView != NULL) {
-                                    pASMView->showSceneDetails();
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
+                                if(id == pMyScene->tracks[i].getId()) {
+                                    pMyScene->tracks[i].setGain(gain);
+                                    pMyScene->tracks[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+
+                        //Go through the busses
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
+                                if(id == pMyScene->busses[i].getId()) {
+                                    pMyScene->busses[i].setGain(gain);
+                                    pMyScene->busses[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
                                 }
                             }
                         }
                     }
+                }
+                //a CC message on a channel other than 1 is for a send
+                else {
+                    //Implement this once ardour fixes the send binding bug
+                }
+            }
+            if (statusByte == NOTE_ON_NIBBLE) {
+                if (channel == 0) {
+                    //mute a track, or bus
+                    //This is a message for master, a track, or a bus
+                    bool found = false;
+                    if (pMyScene != NULL) {
+                        if (id == MASTER_CC || id == MASTER_CC2) {
+                            pMyScene->master.setMuted(true);
+                            pMyScene->master.setModified(true);
+                            found = true;
+                            if (pASMView != NULL) {
+                                pASMView->showSceneDetails();
+                            }
+                        }
 
-                    //Go through the busses
-                    if(!found) {
-                        for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
-                            if(id == pMyScene->busses[i].getId()) {
-                                pMyScene->busses[i].setGain(gain);
-                                pMyScene->busses[i].setModified(true);
-                                found = true;
-                                if (pASMView != NULL) {
-                                    pASMView->showSceneDetails();
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
+                                if(id == pMyScene->tracks[i].getId()) {
+                                    pMyScene->tracks[i].setMuted(true);
+                                    pMyScene->tracks[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+
+                        //Go through the busses
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
+                                if(id == pMyScene->busses[i].getId()) {
+                                    pMyScene->busses[i].setMuted(true);
+                                    pMyScene->busses[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(channel == 1) {
+                    //solo a track or bus
+                    //This is a message for master, a track, or a bus
+                    bool found = false;
+                    if (pMyScene != NULL) {
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
+                                if(id == pMyScene->tracks[i].getId()) {
+                                    pMyScene->tracks[i].setSoloed(true);
+                                    pMyScene->tracks[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+
+                        //Go through the busses
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
+                                if(id == pMyScene->busses[i].getId()) {
+                                    pMyScene->busses[i].setSoloed(true);
+                                    pMyScene->busses[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (statusByte == NOTE_OFF_NIBBLE) {
+                if (channel == 0) {
+                    //mute a track, or bus
+                    //This is a message for master, a track, or a bus
+                    bool found = false;
+                    if (pMyScene != NULL) {
+                        if (id == MASTER_CC || id == MASTER_CC2) {
+                            pMyScene->master.setMuted(false);
+                            pMyScene->master.setModified(true);
+                            found = true;
+                            if (pASMView != NULL) {
+                                pASMView->showSceneDetails();
+                            }
+                        }
+
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
+                                if(id == pMyScene->tracks[i].getId()) {
+                                    pMyScene->tracks[i].setMuted(false);
+                                    pMyScene->tracks[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+
+                        //Go through the busses
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
+                                if(id == pMyScene->busses[i].getId()) {
+                                    pMyScene->busses[i].setMuted(false);
+                                    pMyScene->busses[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(channel == 1) {
+                    //solo a track or bus
+                    //This is a message for master, a track, or a bus
+                    bool found = false;
+                    if (pMyScene != NULL) {
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
+                                if(id == pMyScene->tracks[i].getId()) {
+                                    pMyScene->tracks[i].setSoloed(false);
+                                    pMyScene->tracks[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                }
+                            }
+                        }
+
+                        //Go through the busses
+                        if(!found) {
+                            for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
+                                if(id == pMyScene->busses[i].getId()) {
+                                    pMyScene->busses[i].setSoloed(false);
+                                    pMyScene->busses[i].setModified(true);
+                                    found = true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
                                 }
                             }
                         }
@@ -169,7 +332,7 @@ int Jack::process(jack_nframes_t nframes) {
         pthread_mutex_unlock(&txMutex);
     }
 
-     return 0;
+    return 0;
 
 }
 

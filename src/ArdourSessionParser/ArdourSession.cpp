@@ -110,6 +110,10 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
                             idCounter++;
                         } else if (strcmp((char*) property, "MasterOut") == 0) {
                             pScene->master.setGain(gain);
+                            //clear the sends buffer
+                            pScene->master.sends.clear();
+                            getMasterSends(cur_node->parent->children, &(pScene->master));
+
                         }
                         //check if the parent "Processor has a child "
 
@@ -167,6 +171,37 @@ void ArdourSessionParser::getTrackSends(xmlNode* a_node, Track * track, int trac
                 }
             }
             getTrackSends(routeNode->children,track,trackId);
+        }
+    }
+
+    sendCounter = 1;
+}
+
+void ArdourSessionParser::getMasterSends(xmlNode* a_node, Master * master) {
+    xmlNode *routeNode = NULL;
+    static int sendCounter = 1;
+    unsigned char *property;
+    char gain;
+
+
+    for (routeNode = a_node; routeNode; routeNode = routeNode->next) {
+        if (routeNode->type == XML_ELEMENT_NODE) {
+            if (strcmp((char*) routeNode->name, "Processor") == 0
+                    && strcmp((char*) routeNode->parent->name, "Processor") == 0) {
+                if (strcmp((char*) xmlGetProp(routeNode, BAD_CAST "name"), "Amp")
+                        == 0) {
+                    //Get the send gain
+                    //Get the gain of the track from the Controllable attribute
+                    property = xmlGetProp(xmlLastElementChild(routeNode),
+                                          BAD_CAST "value");
+                    if (property != NULL) {
+                        //Convert gain to db, what we use internally
+                        gain = absToCC(atof((char*) property));
+                        master->sends.push_back(Send((char) 318,(char)sendCounter,gain));
+                    }
+                }
+            }
+            getMasterSends(routeNode->children, master);
         }
     }
 

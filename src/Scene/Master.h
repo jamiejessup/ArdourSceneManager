@@ -2,6 +2,7 @@
 #define MASTER_H
 
 #include "ArdourControllable.h"
+#include "Send.h"
 
 #define MASTER_ID 119
 
@@ -11,6 +12,7 @@ class Master : public ArdourControllable
     char panDir;
     char panWidth;
 public:
+    std::vector<Send> sends;
     void setMuted(bool mod=true);
     bool getMuted();
     char getPanDir(void);

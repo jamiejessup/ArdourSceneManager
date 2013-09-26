@@ -86,7 +86,7 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
                 destScene->setName((char*) name);
             }
 
-            //Read the master track's gain
+            //Read the master track
             if (strcmp((char*) cur_node->name, "gain") == 0) {
                 //Check that the current node's parent is "master"
                 if (strcmp((char*) cur_node->parent->name, "master") == 0) {

@@ -12,7 +12,7 @@ class Track : public ArdourControllable
     char panWidth;
 public:
     std::vector<Send> sends;
-    void setSoled(bool mod=true);
+    void setSoloed(bool mod=true);
     bool getSoloed();
     void setMuted(bool mod=true);
     bool getMuted();

@@ -34,6 +34,7 @@ class ArdourSessionParser {
 	float dBToCC(float gain);
 	char absToCC(float gain);
     void getTrackSends(xmlNode *, Track *, int trackId);
+    void getMasterSends(xmlNode *, Master *);
 public:
 	ArdourSessionParser();
 	/**

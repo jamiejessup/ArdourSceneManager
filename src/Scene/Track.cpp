@@ -7,13 +7,13 @@ void Track::sendToArdour(Jack *pJack) {
     data[2] = gain;
     pthread_mutex_lock(&txMutex);
     pJack->eventVector.push_back(MidiEvent(data));
-    pthread_mutex_unlock(&txMutex);
     for(unsigned i = 0; i<sends.size(); i++) {
         sends[i].sendToArdour(pJack);
     }
+    pthread_mutex_unlock(&txMutex);
 }
 
-void Track::setSoled(bool mod){
+void Track::setSoloed(bool mod){
     soloed = mod;
 }
 
