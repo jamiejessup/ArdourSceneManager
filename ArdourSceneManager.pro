@@ -12,7 +12,8 @@ SOURCES += \
     src/Scene/Send.cpp \
     src/Scene/ArdourControllable.cpp \
     src/Scene/Track.cpp \
-    src/Scene/Master.cpp
+    src/Scene/Master.cpp \
+    src/OSCServer.cpp
 
 HEADERS += \
     src/ASMView.h \
@@ -24,7 +25,9 @@ HEADERS += \
     src/Scene/Send.h \
     src/Scene/ArdourControllable.h \
     src/Scene/Track.h \
-    src/Scene/Master.h
+    src/Scene/Master.h \
+    OSCServer.h \
+    src/OSCServer.h
 
 OTHER_FILES += \
     extras/knob.png \

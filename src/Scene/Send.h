@@ -3,9 +3,6 @@
 
 #include "ArdourControllable.h"
 
-//Reference to the mutexes
-extern pthread_mutex_t txMutex;
-extern pthread_mutex_t rxMutex;
 
 class Send : public ArdourControllable
 {

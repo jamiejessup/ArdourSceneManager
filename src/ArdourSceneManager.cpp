@@ -25,10 +25,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 using namespace std;
 
 /* Mutex for MIDI data to be sent to Ardour */
-pthread_mutex_t txMutex;
-
-/* Mutex for MIDI data being rx'd from Ardour */
-pthread_mutex_t rxMutex;
+pthread_mutex_t midiMutex;
 
 
 /* time stuff to make sure I get the timing right */
@@ -37,8 +34,7 @@ double time_spent;
 
 int main(int argc, char *argv[]) {
 	// Init mutexes
-	pthread_mutex_init(&txMutex, NULL);
-	pthread_mutex_init(&rxMutex, NULL);
+    pthread_mutex_init(&midiMutex, NULL);
 
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv,
 			"org.gtkmm.example");

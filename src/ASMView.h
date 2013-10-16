@@ -37,6 +37,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "SceneParser/SceneParser.h"
 #include "ArdourSessionParser/ArdourSession.h"
 #include "JackMIDI/jackMIDI.h"
+#include "OSCServer.h"
 #include <iostream>
 #include <stdlib.h>
 #include <cstdio>
@@ -57,6 +58,9 @@ class ASMView: public Gtk::Window {
 
 	//Jack MIDI Handler
 	Jack jack;
+
+    //An OSC server
+    //OSCServer oscServer;
 
 	//Scene stuff
 	string sceneFileName;

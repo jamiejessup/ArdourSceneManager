@@ -38,32 +38,30 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #define MASTER_CC 119
 #define MASTER_CC2 118
 
-extern clock_t begin, end;
-extern double time_spent;
-
 class ASMView;
 class Scene;
 
 class Jack
 {
-	float bpm;
-	ASMView* pASMView;
-	float midiCCToFaderGain(char);
-	int process(jack_nframes_t nframes);
-	int playbackIndex;
-	void activate();
+    float bpm;
+    ASMView* pASMView;
+    float midiCCToFaderGain(char);
+    int process(jack_nframes_t nframes);
+    int playbackIndex;
+    void activate();
 
-	jack_client_t*	client;
-	jack_port_t*		inputPort;
-	jack_port_t*		outputPort;
+    jack_client_t*	client;
+    jack_port_t*		inputPort;
+    jack_port_t*		outputPort;
 
-	public:
-		Jack(ASMView*);
-		~Jack();
-		
-		static int staticProcess(jack_nframes_t nframes, void *arg);
-		std::vector<MidiEvent> eventVector;
-	
+public:
+    Jack(ASMView*);
+    ~Jack();
+
+    static int staticProcess(jack_nframes_t nframes, void *arg);
+    std::vector<MidiEvent> eventVector;
+    std::vector<MidiEvent> *getEventVector();
+
 };
 
 #endif 

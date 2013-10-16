@@ -4,9 +4,7 @@
 #include "../JackMIDI/jackMIDI.h"
 
 //Reference to the mutexes
-extern pthread_mutex_t txMutex;
-extern pthread_mutex_t rxMutex;
-
+extern pthread_mutex_t midiMutex;
 class ArdourControllable
 {
 protected:
@@ -18,7 +16,7 @@ public:
     char getGain(void);
     void setGain(char);
     void setModified(bool mod=true);
-    bool getModified();
+    virtual bool getModified();
     char getId(void);
     ArdourControllable(char id);
     ArdourControllable();

@@ -1,16 +1,17 @@
 #include "Track.h"
 
 void Track::sendToArdour(Jack *pJack) {
+
     char *data = new char[3];
     data[0] = CC_MASK;
     data[1] = (char) id;
     data[2] = gain;
-    pthread_mutex_lock(&txMutex);
+    pthread_mutex_lock(&midiMutex);
     pJack->eventVector.push_back(MidiEvent(data));
+    pthread_mutex_unlock(&midiMutex);
     for(unsigned i = 0; i<sends.size(); i++) {
         sends[i].sendToArdour(pJack);
     }
-    pthread_mutex_unlock(&txMutex);
 }
 
 void Track::setSoloed(bool mod){
@@ -43,4 +44,14 @@ char Track::getPanWidth(void){
 
 void Track::setPanWidth(char newPanWidth) {
     panWidth = newPanWidth;
+}
+
+bool Track::getModified() {
+    for(unsigned i = 0; i<sends.size(); i++){
+        if(sends[i].getModified()){
+            return true;
+        }
+    }
+
+    return modified;
 }

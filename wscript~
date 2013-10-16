@@ -39,7 +39,7 @@ def build(ctx):
               'src/Scene/Scene.cpp',
               'src/SceneParser/SceneParser.cpp',
               'src/ArdourSessionParser/ArdourSession.cpp',
-              'src/OSCServer.cpp']
+              'src/OSCServer.h']
   
   
   sourceDepends = 'JACK GTKMM XML LO'

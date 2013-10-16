@@ -17,7 +17,7 @@ void Send::sendToArdour(Jack *pJack) {
     data[0] = CC_MASK + id;
     data[1] = (char) trackId;
     data[2] = gain;
-    pthread_mutex_lock(&txMutex);
+    pthread_mutex_lock(&midiMutex);
     pJack->eventVector.push_back(MidiEvent(data));
-    pthread_mutex_unlock(&txMutex);
+    pthread_mutex_unlock(&midiMutex);
 }

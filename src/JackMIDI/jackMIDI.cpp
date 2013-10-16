@@ -121,6 +121,7 @@ int Jack::process(jack_nframes_t nframes) {
                                     if (pASMView != NULL) {
                                         pASMView->showSceneDetails();
                                     }
+                                    break;
                                 }
                             }
                         }
@@ -135,6 +136,7 @@ int Jack::process(jack_nframes_t nframes) {
                                     if (pASMView != NULL) {
                                         pASMView->showSceneDetails();
                                     }
+                                    break;
                                 }
                             }
                         }
@@ -142,7 +144,45 @@ int Jack::process(jack_nframes_t nframes) {
                 }
                 //a CC message on a channel other than 1 is for a send
                 else {
-                    //Implement this once ardour fixes the send binding bug
+                    std::cout<< "Got a message on channel" << (int) channel << "For track" <<  (int) id << "\n";
+                    //This is a message for a send on master(soon), a track, or a bus
+                    bool found = false;
+                    if(!found) {
+                        for(unsigned int i =0; i<pMyScene->tracks.size(); i++) {
+                            if(id == pMyScene->tracks[i].getId()) {
+                                if((unsigned) channel <= pMyScene->tracks[i].sends.size()) {
+                                    pMyScene->tracks[i].sends[channel-1].setGain(gain);
+                                    pMyScene->tracks[i].sends[channel-1].setModified(true);
+                                    found =true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                    break;
+
+                                }
+                            }
+                        }
+                    }
+
+                    //Go through the busses
+                    if(!found) {
+                        for(unsigned int i =0; i<pMyScene->busses.size(); i++) {
+                            if(id == pMyScene->busses[i].getId()) {
+                                if((unsigned) channel <= pMyScene->busses[i].sends.size()) {
+                                    pMyScene->busses[i].sends[channel-1].setGain(gain);
+                                    pMyScene->busses[i].sends[channel-1].setModified(true);
+                                    found =true;
+                                    if (pASMView != NULL) {
+                                        pASMView->showSceneDetails();
+                                    }
+                                    break;
+
+                                }
+                            }
+                        }
+                    }
+
+
                 }
             }
             if (statusByte == NOTE_ON_NIBBLE) {
@@ -306,7 +346,7 @@ int Jack::process(jack_nframes_t nframes) {
 
     }
     //Try and lock the resource of data to be sent, if not next time
-    if (pthread_mutex_trylock(&txMutex) == 0) {
+    if (pthread_mutex_trylock(&midiMutex) == 0) {
         // go through data to be sent!
         for (unsigned int i = 0; i < nframes; i++) {
             if (eventVector.size() > 0) {
@@ -321,7 +361,6 @@ int Jack::process(jack_nframes_t nframes) {
                     buffer[0] = midiEvent.data[0];
                     buffer[1] = midiEvent.data[1];
                     buffer[2] = midiEvent.data[2];
-                    std::cout << "Hello" << std::endl;
                 }
                 //Take the midi event out of the queue to be written
                 eventVector.erase(eventVector.begin());
@@ -329,7 +368,7 @@ int Jack::process(jack_nframes_t nframes) {
 
         }
         //Give up the resource
-        pthread_mutex_unlock(&txMutex);
+        pthread_mutex_unlock(&midiMutex);
     }
 
     return 0;
@@ -345,5 +384,9 @@ float Jack::midiCCToFaderGain(char dataByte) {
         return -600;
     } else
         return gain * log10((int) dataByte / (float) 99.0);
+}
+
+std::vector<MidiEvent> * Jack::getEventVector() {
+    return &eventVector;
 }
 

@@ -21,9 +21,7 @@ ArdourControllable::ArdourControllable(char newId, char newGain)
 }
 
 void ArdourControllable::setModified(bool mod) {
-    pthread_mutex_lock(&rxMutex);
     modified = mod;
-    pthread_mutex_unlock(&rxMutex);
 }
 
 bool ArdourControllable::getModified() {
@@ -31,9 +29,7 @@ bool ArdourControllable::getModified() {
 }
 
 void ArdourControllable::setGain(char newGain) {
-    pthread_mutex_lock(&rxMutex);
     gain = newGain;
-    pthread_mutex_unlock(&rxMutex);
 }
 
 char ArdourControllable::getGain(void) {

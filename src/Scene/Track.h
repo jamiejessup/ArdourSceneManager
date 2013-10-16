@@ -21,6 +21,7 @@ public:
     char getPanWidth(void);
     void setPanWidth(char);
     void sendToArdour(Jack *pJack);
+    bool getModified();
     Track(char id) : ArdourControllable(id) {}
     Track(char id,char gain) : ArdourControllable(id,gain) {}
 };

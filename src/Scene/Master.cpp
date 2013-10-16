@@ -5,12 +5,12 @@ void Master::sendToArdour(Jack *pJack) {
     data[0] = CC_MASK;
     data[1] = id;
     data[2] = gain;
-    pthread_mutex_lock(&txMutex);
+    pthread_mutex_lock(&midiMutex);
     pJack->eventVector.push_back(MidiEvent(data));
     for(unsigned i = 0; i<sends.size(); i++) {
         sends[i].sendToArdour(pJack);
     }
-    pthread_mutex_unlock(&txMutex);
+    pthread_mutex_unlock(&midiMutex);
 }
 
 void Master::setMuted(bool mod) {

@@ -21,7 +21,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "JackMIDI/jackMIDI.h"
 
 ASMView::ASMView() :
-    jack(this), myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
+    jack(this), /*oscServer(jack.getEventVector()),*/myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
         Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(
         Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
         Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
@@ -238,9 +238,6 @@ void ASMView::on_new_button_clicked() {
 }
 
 void ASMView::on_load_button_clicked() {
-    /* This stuff is used for timing verification
-     begin = clock();
-     */
     loadNewSceneFile();
 }
 
