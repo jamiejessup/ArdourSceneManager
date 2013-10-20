@@ -22,9 +22,11 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 #include <jack/jack.h>
 #include <jack/midiport.h>
+#include <jack/ringbuffer.h>
 #include <cmath>
 #include "midi.h"
 #include <vector>
+#include "../ControllerEvent.h"
 
 #define CC_MASK 0b10110000
 #define CC_NIBBLE 0b1011
@@ -49,6 +51,7 @@ class Jack
     int process(jack_nframes_t nframes);
     int playbackIndex;
     void activate();
+    ControllerEvent controllerEvent;
 
     jack_client_t*	client;
     jack_port_t*		inputPort;
@@ -60,7 +63,9 @@ public:
 
     static int staticProcess(jack_nframes_t nframes, void *arg);
     std::vector<MidiEvent> eventVector;
+    jack_ringbuffer_t *controllerBuffer;
     std::vector<MidiEvent> *getEventVector();
+    jack_ringbuffer_t *ardourOSCBuffer;
 
 };
 

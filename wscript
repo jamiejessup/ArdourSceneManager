@@ -6,7 +6,7 @@ top = '.'
 out = 'build'
 
 def set_options(opt):
-	print '\nSetting build options & flags...'
+	#print '\nSetting build options & flags'
 	# We tell Waf we need a C++ compiler
 	opt.tool_options('compiler_cxx')
 

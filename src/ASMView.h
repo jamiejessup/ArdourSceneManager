@@ -33,6 +33,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <gtkmm/treeview.h>
 #include <gtkmm/treemodel.h>
 #include <gtkmm/stock.h>
+#include <glibmm/main.h>
 #include "Scene/Scene.h"
 #include "SceneParser/SceneParser.h"
 #include "ArdourSessionParser/ArdourSession.h"
@@ -60,7 +61,13 @@ class ASMView: public Gtk::Window {
 	Jack jack;
 
     //An OSC server
-    //OSCServer oscServer;
+    OSCServer oscServer;
+
+    //timout
+    const int timeoutValue;
+
+    //A timer callback function
+    bool onTimeout(int);
 
 	//Scene stuff
 	string sceneFileName;

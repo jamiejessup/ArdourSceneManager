@@ -26,7 +26,7 @@ public:
 	MidiEvent(char *inData) {
 		memcpy(data, inData, sizeof(char)*3);
 	}
-	char data[3];
+    char data[3];
 };
 
 #endif /* MIDI_H_ */

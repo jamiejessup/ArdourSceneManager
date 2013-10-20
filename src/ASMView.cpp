@@ -19,20 +19,23 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ASMView.h"
 #include "JackMIDI/jackMIDI.h"
+#include "OSCServer.h"
 
 ASMView::ASMView() :
-    jack(this), /*oscServer(jack.getEventVector()),*/myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL), topBox(
-        Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(
-        Gtk::ORIENTATION_HORIZONTAL, 10), bottomBox(
-        Gtk::ORIENTATION_HORIZONTAL, 10), frameBox(
-        Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"), saveButton(
-        "Save Scene"), closeButton("Close"), newButton(
-        "New Scene From Ardour Session"), removeButton("Remove Scene"), nameInfoLabel(
-        "Name:"), numTracksInfoLabel("Number of Tracks:"), numTracksLabel(
-        "0"), updatedTracksInfoLabel("Tracks Updated: "), updatedTracksLabel(
-        "0"), numBussesInfoLabel("Number of Busses"), numBussesLabel("0"),
-    updatedBussesInfoLabel("Busses Updated"), updatedBussesLabel("0"),
-    sceneFrame("Current Scene Details") {
+    jack(this), oscServer(jack.controllerBuffer),timeoutValue(100),
+    myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL),
+    topBox(Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(Gtk::ORIENTATION_HORIZONTAL, 10),
+    bottomBox(Gtk::ORIENTATION_HORIZONTAL, 10),
+    frameBox(Gtk::ORIENTATION_VERTICAL, 10), loadButton("Load Scene"),
+    saveButton("Save Scene"), closeButton("Close"),
+    newButton("New Scene From Ardour Session"), removeButton("Remove Scene"),
+    nameInfoLabel("Name:"), numTracksInfoLabel("Number of Tracks:"),
+    numTracksLabel("0"), updatedTracksInfoLabel("Tracks Updated: "),
+    updatedTracksLabel("0"), numBussesInfoLabel("Number of Busses"),
+    numBussesLabel("0"),updatedBussesInfoLabel("Busses Updated"),
+    updatedBussesLabel("0"),sceneFrame("Current Scene Details") {
+
+    jack.ardourOSCBuffer = oscServer.ardourOSCBuffer;
 
     saveButton.set_sensitive(false);
     loadButton.set_sensitive(false);
@@ -50,6 +53,12 @@ ASMView::ASMView() :
     scrolledWindow.add(treeView);
     scrolledWindow.set_size_request(10, 150);
     scrolledWindow.set_sensitive(false);
+
+    //check for new messages to send to the controller every 10ms
+    sigc::slot<bool> slot = sigc::bind(
+                sigc::mem_fun(*this, &ASMView::onTimeout), 0);
+    sigc::connection conn = Glib::signal_timeout().connect(slot,
+              timeoutValue);
 
     //Make the middle box the one that expands on resize
     topBox.set_vexpand_set(false);
@@ -393,4 +402,8 @@ void ASMView::loadNewSceneFile() {
 
 Scene *ASMView::getScene(){
     return &myScene;
+}
+
+bool ASMView::onTimeout(int a) {
+    return true;
 }

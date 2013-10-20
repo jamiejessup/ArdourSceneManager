@@ -27,7 +27,8 @@ HEADERS += \
     src/Scene/Track.h \
     src/Scene/Master.h \
     OSCServer.h \
-    src/OSCServer.h
+    src/OSCServer.h \
+    src/ControllerEvent.h
 
 OTHER_FILES += \
     extras/knob.png \

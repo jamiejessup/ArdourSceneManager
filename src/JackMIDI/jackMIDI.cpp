@@ -20,12 +20,25 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "../Scene/Scene.h"
 
 Jack::Jack(ASMView* mw) :
-    pASMView(mw) {
+    pASMView(mw), controllerEvent("",0.0) {
     bpm = 120.0;
 
     if ((client = jack_client_open("Ardour Scene Manager", JackNullOption, NULL))
             == 0) {
         std::cout << "jack server not running?" << std::endl;
+    }
+
+    // create an instance of a ringbuffer that will hold up to 20 integers,
+    // let the pointer point to it
+    controllerBuffer = jack_ringbuffer_create( 200 * sizeof(MidiEvent));
+
+    // lock the buffer into memory, this is *NOT* realtime safe, do it before
+    // using the buffer!
+    int res = jack_ringbuffer_mlock(controllerBuffer);
+
+    // check if we've locked the memory successfully
+    if ( res ) {
+        std::cout << "Error locking memory!" << std::endl;
     }
 
     inputPort = jack_port_register(client, "midi_in", JACK_DEFAULT_MIDI_TYPE,
@@ -65,7 +78,6 @@ void Jack::activate() {
         }
         i++;
     }
-
 }
 
 int Jack::staticProcess(jack_nframes_t nframes, void *arg) {
@@ -110,6 +122,10 @@ int Jack::process(jack_nframes_t nframes) {
                             if (pASMView != NULL) {
                                 pASMView->showSceneDetails();
                             }
+                            //send to the controller
+                            controllerEvent.path = "/controller/master/fader";
+                            controllerEvent.value = (float) gain;
+                            jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
                         }
 
                         if(!found) {
@@ -121,6 +137,10 @@ int Jack::process(jack_nframes_t nframes) {
                                     if (pASMView != NULL) {
                                         pASMView->showSceneDetails();
                                     }
+                                    //send to the controller
+                                    controllerEvent.path = "/controller/track/fader/"+std::to_string((int)id);
+                                    controllerEvent.value = (float) gain;
+                                    jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
                                     break;
                                 }
                             }
@@ -345,6 +365,30 @@ int Jack::process(jack_nframes_t nframes) {
         }
 
     }
+
+    //Check if there is anything from the controller to send to JACK
+    // check if there's anything to read
+    unsigned availableRead = jack_ringbuffer_read_space(controllerBuffer);
+
+    if ( availableRead >= sizeof(MidiEvent) ) {
+
+        /* Write midi data to the buffer */
+        unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
+                                                        0, 3);
+
+        if (buffer == 0) {
+            cout << "Midi write failed -- write buffer == 0" << endl;
+        } else {
+            char init[3] ={0};
+            MidiEvent midiEvent(init);
+            jack_ringbuffer_read(controllerBuffer,(char*)&midiEvent,sizeof(MidiEvent));
+
+            buffer[0] = midiEvent.data[0];
+            buffer[1] = midiEvent.data[1];
+            buffer[2] = midiEvent.data[2];
+        }
+    }
+
     //Try and lock the resource of data to be sent, if not next time
     if (pthread_mutex_trylock(&midiMutex) == 0) {
         // go through data to be sent!
