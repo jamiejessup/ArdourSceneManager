@@ -22,7 +22,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "OSCServer.h"
 
 ASMView::ASMView() :
-    jack(this), oscServer(jack.controllerBuffer),timeoutValue(100),
+    jack(this), oscServer(jack.controllerBuffer), controllerEvent("",0),
     myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL),
     topBox(Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(Gtk::ORIENTATION_HORIZONTAL, 10),
     bottomBox(Gtk::ORIENTATION_HORIZONTAL, 10),
@@ -35,11 +35,28 @@ ASMView::ASMView() :
     numBussesLabel("0"),updatedBussesInfoLabel("Busses Updated"),
     updatedBussesLabel("0"),sceneFrame("Current Scene Details") {
 
-    jack.ardourOSCBuffer = oscServer.ardourOSCBuffer;
+    // create an instance of a ringbuffer that will hold up to 20 integers,
+    // let the pointer point to it
+    sceneUpdateBuffer = jack_ringbuffer_create( 200 * sizeof(MidiEvent));
+
+    // lock the buffer into memory, this is *NOT* realtime safe, do it before
+    // using the buffer!
+    int res = jack_ringbuffer_mlock(sceneUpdateBuffer);
+
+    // check if we've locked the memory successfully
+    if ( res ) {
+        std::cout << "Error locking memory!" << std::endl;
+    }
+
+    ardourOSCBuffer = oscServer.ardourOSCBuffer;
+    jack.sceneUpdateBuffer = sceneUpdateBuffer;
+    jack.activate();
 
     saveButton.set_sensitive(false);
     loadButton.set_sensitive(false);
     removeButton.set_sensitive(false);
+
+    Glib::signal_idle().connect( sigc::mem_fun(*this, &ASMView::idleFunction) );
 
     // Set title and border of the window
     set_title("Ardour Scene Manager");
@@ -54,11 +71,6 @@ ASMView::ASMView() :
     scrolledWindow.set_size_request(10, 150);
     scrolledWindow.set_sensitive(false);
 
-    //check for new messages to send to the controller every 10ms
-    sigc::slot<bool> slot = sigc::bind(
-                sigc::mem_fun(*this, &ASMView::onTimeout), 0);
-    sigc::connection conn = Glib::signal_timeout().connect(slot,
-              timeoutValue);
 
     //Make the middle box the one that expands on resize
     topBox.set_vexpand_set(false);
@@ -404,6 +416,257 @@ Scene *ASMView::getScene(){
     return &myScene;
 }
 
-bool ASMView::onTimeout(int a) {
+bool ASMView::idleFunction() {
+
+    //Check if there is anything from the jack client to update the scene with
+    unsigned availableRead = jack_ringbuffer_read_space(sceneUpdateBuffer);
+
+    if ( availableRead >= sizeof(MidiEvent) ) {
+
+        char init[3] ={0};
+        MidiEvent midiEvent(init);
+        jack_ringbuffer_read(sceneUpdateBuffer,(char*)&midiEvent,sizeof(MidiEvent));
+
+        //Do some scene updating logic
+        sceneUpdateHandler(midiEvent);
+
+    }
+
     return true;
+}
+
+void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
+    char id = midiEvent.data[1];
+    char gain = midiEvent.data[2];
+
+    char statusByte = (unsigned char) midiEvent.data[0] >> 4;
+    char channel = midiEvent.data[0] & 0x0F;
+
+    if (statusByte == CC_NIBBLE) {
+        if(channel == 0) {
+            //This is a message for master, a track, or a bus
+            bool found = false;
+
+            if (id == MASTER_CC || id == MASTER_CC2) {
+                myScene.master.setGain(gain);
+                myScene.master.setModified(true);
+                found = true;
+                showSceneDetails();
+                //send to the controller
+                controllerEvent.path = "/controller/master/fader";
+                controllerEvent.value = (float) gain;
+                jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
+            }
+
+            if(!found) {
+                for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                    if(id == myScene.tracks[i].getId()) {
+                        myScene.tracks[i].setGain(gain);
+                        myScene.tracks[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+
+                        //send to the controller
+                        controllerEvent.path = "/controller/track/fader/"+std::to_string((int)i);
+                        controllerEvent.value = (float) gain;
+                        jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
+                        break;
+                    }
+                }
+            }
+
+            //Go through the busses
+            if(!found) {
+                for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                    if((char) id == (char) myScene.busses[i].getId()) {
+                        myScene.busses[i].setGain(gain);
+                        myScene.busses[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+
+                        //send to the controller
+                        controllerEvent.path = "/controller/bus/fader/"+std::to_string((int)i);
+                        controllerEvent.value = (float) gain;
+                        jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    //a CC message on a channel other than 1 is for a send
+    else {
+        // std::cout<< "Got a message on channel" << (int) channel << "For track" <<  (int) id << "\n";
+        //This is a message for a send on master(soon), a track, or a bus
+        bool found = false;
+        if(!found) {
+            for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                if(id == myScene.tracks[i].getId()) {
+                    if((unsigned) channel <= myScene.tracks[i].sends.size()) {
+                        myScene.tracks[i].sends[channel-1].setGain(gain);
+                        myScene.tracks[i].sends[channel-1].setModified(true);
+                        found =true;
+                        showSceneDetails();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Go through the busses
+        if(!found) {
+            for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                if(id == myScene.busses[i].getId()) {
+                    if((unsigned) channel <= myScene.busses[i].sends.size()) {
+                        myScene.busses[i].sends[channel-1].setGain(gain);
+                        myScene.busses[i].sends[channel-1].setModified(true);
+                        found =true;
+                        showSceneDetails();
+                        break;
+
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    if (statusByte == NOTE_ON_NIBBLE) {
+        if (channel == 0) {
+            //mute a track, or bus
+            //This is a message for master, a track, or a bus
+            bool found = false;
+
+            if (id == MASTER_CC || id == MASTER_CC2) {
+                myScene.master.setMuted(true);
+                myScene.master.setModified(true);
+                found = true;
+                showSceneDetails();
+            }
+
+
+            if(!found) {
+                for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                    if(id == myScene.tracks[i].getId()) {
+                        myScene.tracks[i].setMuted(true);
+                        myScene.tracks[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+
+            //Go through the busses
+            if(!found) {
+                for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                    if(id == myScene.busses[i].getId()) {
+                        myScene.busses[i].setMuted(true);
+                        myScene.busses[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+        }
+
+        if(channel == 1) {
+            //solo a track or bus
+            //This is a message for master, a track, or a bus
+            bool found = false;
+            if(!found) {
+                for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                    if(id == myScene.tracks[i].getId()) {
+                        myScene.tracks[i].setSoloed(true);
+                        myScene.tracks[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+
+            //Go through the busses
+            if(!found) {
+                for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                    if(id == myScene.busses[i].getId()) {
+                        myScene.busses[i].setSoloed(true);
+                        myScene.busses[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+        }
+    }
+
+    if (statusByte == NOTE_OFF_NIBBLE) {
+        if (channel == 0) {
+            //mute a track, or bus
+            //This is a message for master, a track, or a bus
+            bool found = false;
+
+            if (id == MASTER_CC || id == MASTER_CC2) {
+                myScene.master.setMuted(false);
+                myScene.master.setModified(true);
+                found = true;
+                showSceneDetails();
+            }
+
+            if(!found) {
+                for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                    if(id == myScene.tracks[i].getId()) {
+                        myScene.tracks[i].setMuted(false);
+                        myScene.tracks[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+
+            //Go through the busses
+            if(!found) {
+                for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                    if(id == myScene.busses[i].getId()) {
+                        myScene.busses[i].setMuted(false);
+                        myScene.busses[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+
+        }
+
+        if(channel == 1) {
+            //solo a track or bus
+            //This is a message for master, a track, or a bus
+            bool found = false;
+            if(!found) {
+                for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                    if(id == myScene.tracks[i].getId()) {
+                        myScene.tracks[i].setSoloed(false);
+                        myScene.tracks[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+
+            //Go through the busses
+            if(!found) {
+                for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                    if(id == myScene.busses[i].getId()) {
+                        myScene.busses[i].setSoloed(false);
+                        myScene.busses[i].setModified(true);
+                        found = true;
+                        showSceneDetails();
+                    }
+                }
+            }
+        }
+    }
+
+
+
 }

@@ -26,7 +26,8 @@ using namespace std;
 
 /* Mutex for MIDI data to be sent to Ardour */
 pthread_mutex_t midiMutex;
-
+/* Mutex for controller ID data */
+pthread_mutex_t idMutex;
 
 /* time stuff to make sure I get the timing right */
 clock_t begin, end;
@@ -35,6 +36,7 @@ double time_spent;
 int main(int argc, char *argv[]) {
 	// Init mutexes
     pthread_mutex_init(&midiMutex, NULL);
+    pthread_mutex_init(&idMutex, NULL);
 
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv,
 			"org.gtkmm.example");

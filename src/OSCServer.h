@@ -34,6 +34,8 @@ class OSCServer
     int busBank;
     int numTrackBanks;
     int numBusBanks;
+    char trackIds[8];
+    char busIds[4];
 
     //controller event to use
     ControllerEvent ce;
@@ -61,6 +63,9 @@ public:
     OSCServer(jack_ringbuffer_t *cb);
     ~OSCServer();
     jack_ringbuffer_t *ardourOSCBuffer;
+    void setTrackIds(char *data);
+    void setBusIds(char *data);
+    void setIds(char *trackData, char *busData);
 };
 
 #endif // OSCSERVER_H

@@ -20,6 +20,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 
 Scene::Scene(Jack * pJackIn) : master((char) MASTER_ID) {
 	pJack = pJackIn;
+
 }
 
 
@@ -59,7 +60,7 @@ int Scene::getUpdatedBusses() {
     if (master.getModified())
         updated++;
     for (int i = 0; i < (int) busses.size(); i++) {
-        if (tracks[i].getModified())
+        if (busses[i].getModified())
             updated++;
     }
     return updated;

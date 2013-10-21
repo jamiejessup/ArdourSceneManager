@@ -78,7 +78,7 @@ int OSCServer::genericHandler(
             char data[3] = {(char) CC_MASK,(char) atoi(pathStr.c_str()),(char) ((int) argv[0]->f)};
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
-            if((midiEvent.data[0] != lastEvent.data[0]) && (midiEvent.data[1] != lastEvent.data[1]) && (midiEvent.data[2] != lastEvent.data[2]) ){
+            if((midiEvent.data[0] != lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
                 jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
                 lastEvent = midiEvent;
             }
@@ -112,7 +112,7 @@ int OSCServer::genericHandler(
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
             //Send it to the jack client to handle send to Ardour
-            if((midiEvent.data[0] != lastEvent.data[0]) && (midiEvent.data[1] != lastEvent.data[1]) && (midiEvent.data[2] != lastEvent.data[2]) ){
+            if((midiEvent.data[0] != lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
                 jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
                 lastEvent = midiEvent;
             }
@@ -143,7 +143,7 @@ int OSCServer::genericHandler(
             char data[3] = {(char) CC_MASK,MASTER_CC,(char)((int) argv[0]->f)};
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
-            if((midiEvent.data[0] != lastEvent.data[0]) && (midiEvent.data[1] != lastEvent.data[1]) && (midiEvent.data[2] != lastEvent.data[2]) ){
+            if((midiEvent.data[0] || lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
                 jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
                 lastEvent = midiEvent;
             }
@@ -193,4 +193,21 @@ void *OSCServer::controllerOutThread(void * data) {
 
     pthread_exit(NULL);
 
+}
+
+void OSCServer::setTrackIds(char *data) {
+    for(int i=0; i<8; i++){
+        trackIds[i] = *(data++);
+    }
+}
+
+void OSCServer::setBusIds(char *data) {
+    for(int i=0; i<4; i++) {
+        busIds[i] = *(data++);
+    }
+}
+
+void OSCServer::setIds(char *trackData, char *busData){
+    setTrackIds(trackData);
+    setBusIds(busData);
 }

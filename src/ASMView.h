@@ -18,6 +18,15 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #ifndef GTKMM_EXAMPLE_RADIOBUTTONS_H
 #define GTKMM_EXAMPLE_RADIOBUTTONS_H
 
+#define CC_MASK 0b10110000
+#define CC_NIBBLE 0b1011
+#define NOTE_ON_NIBBLE 0b1001
+#define NOTE_OFF_NIBBLE 0b100
+
+//Two defines because sometimes Ardour outputs on one less than the midi map
+#define MASTER_CC 119
+#define MASTER_CC2 118
+
 #include <gtkmm/grid.h>
 #include <gtkmm/box.h>
 #include <gtkmm/entry.h>
@@ -43,6 +52,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <cstdio>
 #include <dirent.h>
+#include "ControllerEvent.h"
 
 class ASMView: public Gtk::Window {
 	void loadNewSceneFile();
@@ -63,11 +73,16 @@ class ASMView: public Gtk::Window {
     //An OSC server
     OSCServer oscServer;
 
-    //timout
-    const int timeoutValue;
+    ControllerEvent controllerEvent;
 
-    //A timer callback function
-    bool onTimeout(int);
+    //A ring buffer ptr for the jack client to send us messages
+    jack_ringbuffer_t *sceneUpdateBuffer;
+    jack_ringbuffer_t *ardourOSCBuffer;
+
+    //Idle function to poll for messages
+    bool idleFunction();
+
+    void sceneUpdateHandler(MidiEvent& midiEvent);
 
 	//Scene stuff
 	string sceneFileName;

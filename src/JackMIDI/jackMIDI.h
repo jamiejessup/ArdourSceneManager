@@ -28,12 +28,13 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include "../ControllerEvent.h"
 
+
+#define ARDOUR_MIDI_CTL_IN "ardour:MIDI control in"
+#define ARDOUR_MIDI_CTL_OUT "ardour:MIDI control out"
 #define CC_MASK 0b10110000
 #define CC_NIBBLE 0b1011
 #define NOTE_ON_NIBBLE 0b1001
-#define NOTE_OFF_NIBBLE 0b1000
-#define ARDOUR_MIDI_CTL_IN "ardour:MIDI control in"
-#define ARDOUR_MIDI_CTL_OUT "ardour:MIDI control out"
+#define NOTE_OFF_NIBBLE 0b100
 
 
 //Two defines because sometimes Ardour outputs on one less than the midi map
@@ -50,7 +51,6 @@ class Jack
     float midiCCToFaderGain(char);
     int process(jack_nframes_t nframes);
     int playbackIndex;
-    void activate();
     ControllerEvent controllerEvent;
 
     jack_client_t*	client;
@@ -60,12 +60,13 @@ class Jack
 public:
     Jack(ASMView*);
     ~Jack();
+    void activate();
 
     static int staticProcess(jack_nframes_t nframes, void *arg);
     std::vector<MidiEvent> eventVector;
     jack_ringbuffer_t *controllerBuffer;
     std::vector<MidiEvent> *getEventVector();
-    jack_ringbuffer_t *ardourOSCBuffer;
+    jack_ringbuffer_t *sceneUpdateBuffer;
 
 };
 
