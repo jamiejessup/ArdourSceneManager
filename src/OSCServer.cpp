@@ -56,6 +56,10 @@ int OSCServer::genericHandler(
 
     //find out what this message is for (track bus or master)
 
+    char temp[3] = {0};
+    static MidiEvent lastEvent(temp);
+
+
     std::string pathStr(path);
 
     pathStr = pathStr.substr(1);
@@ -74,7 +78,10 @@ int OSCServer::genericHandler(
             char data[3] = {(char) CC_MASK,(char) atoi(pathStr.c_str()),(char) ((int) argv[0]->f)};
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
-            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            if((midiEvent.data[0] != lastEvent.data[0]) && (midiEvent.data[1] != lastEvent.data[1]) && (midiEvent.data[2] != lastEvent.data[2]) ){
+                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+                lastEvent = midiEvent;
+            }
         }
 
         if(controllable == "bank") {
@@ -104,7 +111,11 @@ int OSCServer::genericHandler(
             char data[3] = {(char) CC_MASK,(char) atoi(pathStr.c_str()),(char) ((int) argv[0]->f)};
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
-            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            //Send it to the jack client to handle send to Ardour
+            if((midiEvent.data[0] != lastEvent.data[0]) && (midiEvent.data[1] != lastEvent.data[1]) && (midiEvent.data[2] != lastEvent.data[2]) ){
+                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+                lastEvent = midiEvent;
+            }
         }
 
         if(controllable == "bank") {
@@ -131,7 +142,11 @@ int OSCServer::genericHandler(
             //build a midi event from the fader value and track number
             char data[3] = {(char) CC_MASK,MASTER_CC,(char)((int) argv[0]->f)};
             MidiEvent midiEvent(data);
-            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            //Send it to the jack client to handle send to Ardour
+            if((midiEvent.data[0] != lastEvent.data[0]) && (midiEvent.data[1] != lastEvent.data[1]) && (midiEvent.data[2] != lastEvent.data[2]) ){
+                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+                lastEvent = midiEvent;
+            }
         }
 
     }
@@ -149,7 +164,6 @@ void OSCServer::firstContact(lo_address addr) {
 
 void OSCServer::sendTrackBank(int bankNumber) {
     lo_send(touchOSC,"/controller/track/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
-
 }
 
 void OSCServer::sendBusBank(int bankNumber) {

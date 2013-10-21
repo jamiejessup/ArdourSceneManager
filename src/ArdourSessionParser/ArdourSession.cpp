@@ -101,7 +101,7 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
 
                             //Check if there is a mode property
                             //If it's not there we are a Bus
-                            if(xmlHasProp(cur_node->parent, BAD_CAST "mode")) {
+                            if(xmlHasProp(cur_node->parent, BAD_CAST "monitoring")) {
                                 pScene->tracks.push_back(*track);
                             }
                             else {
