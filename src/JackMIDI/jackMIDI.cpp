@@ -86,15 +86,12 @@ int Jack::staticProcess(jack_nframes_t nframes, void *arg) {
 int Jack::process(jack_nframes_t nframes) {
     jack_midi_event_t in_event;
 
-    Scene* pMyScene = pASMView->getScene();
 
     void *inputPortBuf = jack_port_get_buffer(inputPort, nframes);
     void *outputPortBuf = jack_port_get_buffer(outputPort, nframes);
 
     /* Clear the buffer so we don't send the same thing all the time */
     jack_midi_clear_buffer(outputPortBuf);
-
-    //Get the transport state
 
     // input: get number of events, and process them.
     jack_nframes_t event_count = jack_midi_get_event_count(inputPortBuf);

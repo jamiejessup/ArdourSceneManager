@@ -17,6 +17,9 @@
 #define CC_NIBBLE 0b1011
 #define MASTER_CC 119
 
+/* Mutex for controller ID data */
+extern pthread_mutex_t idMutex;
+
 class OSCServer
 {
     bool contacted;

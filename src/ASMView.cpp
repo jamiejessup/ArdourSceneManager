@@ -234,6 +234,28 @@ void ASMView::on_new_button_clicked() {
          */
         sessionHandler.init(dialog.get_filename(), &myScene);
 
+        char trackIds[8];
+        char busIds[4];
+        //Set the Id's for the OSC controller
+        unsigned range;
+        if(myScene.tracks.size() > 8){
+            range = 8;
+        }
+        else
+            range =myScene.tracks.size();
+        for(unsigned i =0; i<range; i++){
+            trackIds[i] = myScene.tracks[i].getId();
+        }
+        if(myScene.busses.size() > 4){
+            range = 4;
+        }
+        else
+            range =myScene.busses.size();
+        for(unsigned i=0; i<range; i++) {
+            busIds[i] = myScene.busses[i].getId();
+        }
+        oscServer.setIds(trackIds,busIds);
+
         /*
          * Update the GUI layout
          */

@@ -75,7 +75,14 @@ int OSCServer::genericHandler(
             //get the track number
             pathStr= pathStr.substr(pathStr.find("/") + 1);
             //build a midi event from the fader value and track number
-            char data[3] = {(char) CC_MASK,(char) atoi(pathStr.c_str()),(char) ((int) argv[0]->f)};
+            char data[3];
+            if(pthread_mutex_lock(&idMutex) == 0) {
+                data[0] = (char) CC_MASK;
+                data[1] = trackIds[atoi(pathStr.c_str())];
+                data[2] = (char) ((int) argv[0]->f);
+
+                pthread_mutex_unlock(&idMutex);
+            }
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
             if((midiEvent.data[0] != lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
@@ -107,8 +114,14 @@ int OSCServer::genericHandler(
         if(controllable == "fader") {
             //get the bus number(void *)this
             pathStr= pathStr.substr(pathStr.find("/") + 1);
-            //build a midi event from the fader value and track number
-            char data[3] = {(char) CC_MASK,(char) atoi(pathStr.c_str()),(char) ((int) argv[0]->f)};
+            char data[3];
+            if(pthread_mutex_lock(&idMutex) == 0) {
+                data[0] = (char) CC_MASK;
+                data[1] = busIds[atoi(pathStr.c_str())];
+                data[2] = (char) ((int) argv[0]->f);
+
+                pthread_mutex_unlock(&idMutex);
+            }
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
             //Send it to the jack client to handle send to Ardour
@@ -196,14 +209,20 @@ void *OSCServer::controllerOutThread(void * data) {
 }
 
 void OSCServer::setTrackIds(char *data) {
-    for(int i=0; i<8; i++){
-        trackIds[i] = *(data++);
+    if(pthread_mutex_lock(&idMutex) == 0) {
+        for(int i=0; i<8; i++){
+            trackIds[i] = *(data++);
+        }
+        pthread_mutex_unlock(&idMutex);
     }
 }
 
 void OSCServer::setBusIds(char *data) {
-    for(int i=0; i<4; i++) {
-        busIds[i] = *(data++);
+    if(pthread_mutex_lock(&idMutex) == 0) {
+        for(int i=0; i<4; i++) {
+            busIds[i] = *(data++);
+        }
+        pthread_mutex_unlock(&idMutex);
     }
 }
 
