@@ -19,8 +19,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "../ASMView.h"
 #include "../Scene/Scene.h"
 
-Jack::Jack(ASMView* mw) :
-    pASMView(mw), controllerEvent("",0.0) {
+Jack::Jack(ASMView* mw) : pASMView(mw) {
     bpm = 120.0;
 
     if ((client = jack_client_open("Ardour Scene Manager", JackNullOption, NULL))
@@ -99,7 +98,7 @@ int Jack::process(jack_nframes_t nframes) {
         for (unsigned int i = 0; i < event_count; i++) {
             jack_midi_event_get(&in_event, inputPortBuf, i);
 
-           //Write it to the update ring buffer to be handled by the GUI thread
+            //Write it to the update ring buffer to be handled by the GUI thread
             MidiEvent midiEvent((char*)in_event.buffer);
             jack_ringbuffer_write(sceneUpdateBuffer,(char*) &midiEvent, sizeof(MidiEvent));
 

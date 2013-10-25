@@ -491,7 +491,7 @@ bool ASMView::idleFunction() {
             oscServer.setTrackIds(ids);
 
 
-        } else if(updateReq.what == "trackBank"){
+        } else if(updateReq.what == "busBank"){
             unsigned startIndex = updateReq.bankIndex*4;
             char ids[4];
             for(unsigned i=startIndex; i<startIndex+4; i++){

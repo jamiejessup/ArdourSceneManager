@@ -26,7 +26,6 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include "midi.h"
 #include <vector>
-#include "../ControllerEvent.h"
 
 
 #define ARDOUR_MIDI_CTL_IN "ardour:MIDI control in"
@@ -51,7 +50,6 @@ class Jack
     float midiCCToFaderGain(char);
     int process(jack_nframes_t nframes);
     int playbackIndex;
-    ControllerEvent controllerEvent;
 
     jack_client_t*	client;
     jack_port_t*		inputPort;

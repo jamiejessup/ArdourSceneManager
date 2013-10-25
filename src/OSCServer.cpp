@@ -1,6 +1,6 @@
 #include "OSCServer.h"
 
-OSCServer::OSCServer(jack_ringbuffer_t *cb) : ce("",0)
+OSCServer::OSCServer(jack_ringbuffer_t *cb)
 {
     touchOSC = NULL;
     contacted = false;
@@ -8,22 +8,10 @@ OSCServer::OSCServer(jack_ringbuffer_t *cb) : ce("",0)
     trackBank = busBank = 0;
     numTrackBanks = numBusBanks = 100;
 
-    // create an instance of a ringbuffer that will hold up to 20 integers,
-    // let the pointer point to it
-    ardourOSCBuffer = jack_ringbuffer_create( 200 * sizeof(ControllerEvent));
-
-    // lock the buffer into memory, this is *NOT* realtime safe, do it before
-    // using the buffer!
-    int res = jack_ringbuffer_mlock(ardourOSCBuffer);
-
-    // check if we've locked the memory successfully
-    if ( res ) {
-        std::cout << "Error locking memory!" << std::endl;
-    }
+    pthread_mutex_init(&idMutex, NULL);
 
     //start a new server on port 3820 will change to config file
     serverThread = lo_server_thread_new("8000", NULL);
-
 
     /* add method that will match any path and args */
     lo_server_thread_add_method(serverThread, NULL, NULL, staticHandler, static_cast<void*>(this));
@@ -53,10 +41,6 @@ int OSCServer::genericHandler(
 
     //find out what this message is for (track bus or master)
 
-    char temp[3] = {0};
-    static MidiEvent lastEvent(temp);
-
-
     std::string pathStr(path);
 
     pathStr = pathStr.substr(1);
@@ -82,10 +66,7 @@ int OSCServer::genericHandler(
             }
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
-            if((midiEvent.data[0] != lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
-                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
-                lastEvent = midiEvent;
-            }
+            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
         }
 
         if(controllable == "bank") {
@@ -122,10 +103,7 @@ int OSCServer::genericHandler(
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
             //Send it to the jack client to handle send to Ardour
-            if((midiEvent.data[0] != lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
-                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
-                lastEvent = midiEvent;
-            }
+            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
         }
 
         if(controllable == "bank") {
@@ -153,10 +131,7 @@ int OSCServer::genericHandler(
             char data[3] = {(char) CC_MASK,MASTER_CC,(char)((int) argv[0]->f)};
             MidiEvent midiEvent(data);
             //Send it to the jack client to handle send to Ardour
-            if((midiEvent.data[0] || lastEvent.data[0]) || (midiEvent.data[1] != lastEvent.data[1]) || (midiEvent.data[2] != lastEvent.data[2]) ){
-                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
-                lastEvent = midiEvent;
-            }
+            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
         }
 
     }
@@ -170,13 +145,21 @@ int OSCServer::genericHandler(
 
 void OSCServer::firstContact(lo_address addr) {
     touchOSC = lo_address_new(lo_address_get_hostname(addr),"9000");
+    sendTrackBank(trackBank);
+    sendBusBank(busBank);
 }
 
 void OSCServer::sendTrackBank(int bankNumber) {
+    //Request an update for the track bank faders
+    ControllerUpdateEvent cu("trackBank",bankNumber);
+    jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/track/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
 }
 
 void OSCServer::sendBusBank(int bankNumber) {
+    //Request an update for the bus bank faders
+    ControllerUpdateEvent cu("busBank",bankNumber);
+    jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/bus/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
 }
 

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "lo/lo.h"
 #include "JackMIDI/midi.h"
-#include "ControllerEvent.h"
+#include "ControllerUpdate.h"
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
 
@@ -17,8 +17,6 @@
 #define CC_NIBBLE 0b1011
 #define MASTER_CC 119
 
-/* Mutex for controller ID data */
-extern pthread_mutex_t idMutex;
 
 class OSCServer
 {
@@ -30,6 +28,8 @@ class OSCServer
     void sendTrackBank(int bankNumber);
     void sendBusBank(int bankNumber);
 
+    pthread_mutex_t idMutex;
+
 
     //Controller specific stuff for banking
     int trackBank;
@@ -39,15 +39,10 @@ class OSCServer
     char trackIds[8];
     char busIds[4];
 
-    //controller event to use
-    ControllerEvent ce;
-
-    pthread_t thread;
-
 
     //reference to jack_ring_buffer to send data from Ardour to the controller
     jack_ringbuffer_t *controllerBuffer;
-    //reference for Jack to send stuff to the controller
+
 
 
     /*
@@ -64,11 +59,12 @@ class OSCServer
 public:
     OSCServer(jack_ringbuffer_t *cb);
     ~OSCServer();
-    jack_ringbuffer_t *ardourOSCBuffer;
     void setTrackIds(char *data);
     void setBusIds(char *data);
     void setIds(char *trackData, char *busData);
     void sendToController(std::string& path, float value);
+    //reference for gui thread to send stuff to the controller
+    jack_ringbuffer_t *controllerUpdate;
 };
 
 #endif // OSCSERVER_H

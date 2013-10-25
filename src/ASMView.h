@@ -52,7 +52,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <cstdio>
 #include <dirent.h>
-#include "ControllerEvent.h"
+#include "ControllerUpdate.h"
 
 class ASMView: public Gtk::Window {
 	void loadNewSceneFile();
@@ -73,11 +73,11 @@ class ASMView: public Gtk::Window {
     //An OSC server
     OSCServer oscServer;
 
-    ControllerEvent controllerEvent;
-
     //A ring buffer ptr for the jack client to send us messages
     jack_ringbuffer_t *sceneUpdateBuffer;
-    jack_ringbuffer_t *ardourOSCBuffer;
+
+    //A ring buffer ptr for the controller to request updates
+    jack_ringbuffer_t *controllerUpdate;
 
     //Idle function to poll for messages
     bool idleFunction();
