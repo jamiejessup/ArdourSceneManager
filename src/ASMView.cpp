@@ -463,6 +463,7 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
 
     char statusByte = (unsigned char) midiEvent.data[0] >> 4;
     char channel = midiEvent.data[0] & 0x0F;
+    std::string path;
 
     if (statusByte == CC_NIBBLE) {
         if(channel == 0) {
@@ -474,10 +475,9 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                 myScene.master.setModified(true);
                 found = true;
                 showSceneDetails();
+                path = "/controller/master/fader/";
                 //send to the controller
-                controllerEvent.path = "/controller/master/fader";
-                controllerEvent.value = (float) gain;
-                jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
+                oscServer.sendToController(path, (float) gain);
             }
 
             if(!found) {
@@ -489,9 +489,8 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                         showSceneDetails();
 
                         //send to the controller
-                        controllerEvent.path = "/controller/track/fader/"+std::to_string((int)i);
-                        controllerEvent.value = (float) gain;
-                        jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
+                        path = "/controller/track/fader/"+std::to_string((int)i);
+                        oscServer.sendToController(path, (float) gain);
                         break;
                     }
                 }
@@ -507,9 +506,8 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                         showSceneDetails();
 
                         //send to the controller
-                        controllerEvent.path = "/controller/bus/fader/"+std::to_string((int)i);
-                        controllerEvent.value = (float) gain;
-                        jack_ringbuffer_write(ardourOSCBuffer,(char*) &controllerEvent,sizeof(ControllerEvent));
+                        path = "/controller/bus/fader/"+std::to_string((int)i);
+                        oscServer.sendToController(path, (float) gain);
                         break;
                     }
                 }

@@ -21,9 +21,6 @@ OSCServer::OSCServer(jack_ringbuffer_t *cb) : ce("",0)
         std::cout << "Error locking memory!" << std::endl;
     }
 
-    //start the buffer poller thread
-    pthread_create(&thread, NULL, controllerOutThread, static_cast<void*>(this));
-
     //start a new server on port 3820 will change to config file
     serverThread = lo_server_thread_new("8000", NULL);
 
@@ -183,30 +180,10 @@ void OSCServer::sendBusBank(int bankNumber) {
     lo_send(touchOSC,"/controller/bus/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
 }
 
-
-void *OSCServer::controllerOutThread(void * data) {
-    OSCServer *server = (OSCServer *) data;
-
-    ControllerEvent ce("This is a really long string so I don't get into trouble",0.0);
-
-    for(;;) {
-
-        if(server->touchOSC!=NULL) {
-            //check the ring buffer to see if there is anything
-            unsigned availableRead = jack_ringbuffer_read_space(server->ardourOSCBuffer);
-
-            if ( availableRead >= sizeof(ControllerEvent) ) {
-                jack_ringbuffer_read(server->ardourOSCBuffer,(char*)&ce,sizeof(ControllerEvent));
-                lo_send(server->touchOSC,ce.path.c_str(),"f",ce.value);
-            }
-        }
-
-        usleep(2000);
-    }
-
-    pthread_exit(NULL);
-
+void OSCServer::sendToController(std::string &path, float value){
+    lo_send(touchOSC, path.c_str(), "f", value);
 }
+
 
 void OSCServer::setTrackIds(char *data) {
     if(pthread_mutex_lock(&idMutex) == 0) {

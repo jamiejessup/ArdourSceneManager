@@ -30,7 +30,6 @@ class OSCServer
     void sendTrackBank(int bankNumber);
     void sendBusBank(int bankNumber);
 
-    static void *controllerOutThread(void *data);
 
     //Controller specific stuff for banking
     int trackBank;
@@ -69,6 +68,7 @@ public:
     void setTrackIds(char *data);
     void setBusIds(char *data);
     void setIds(char *trackData, char *busData);
+    void sendToController(std::string& path, float value);
 };
 
 #endif // OSCSERVER_H
