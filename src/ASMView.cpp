@@ -458,8 +458,6 @@ bool ASMView::idleFunction() {
 
     if ( availableRead >= sizeof(MidiEvent) ) {
 
-        char init[3] ={0};
-        MidiEvent midiEvent(init);
         jack_ringbuffer_read(sceneUpdateBuffer,(char*)&midiEvent,sizeof(MidiEvent));
 
         //Do some scene updating logic
@@ -537,7 +535,9 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                 showSceneDetails();
                 path = "/controller/master/fader";
                 //send to the controller
-                oscServer.sendToController(path, (float) gain);
+                if(!midiEvent.fromController){
+                    oscServer.sendToController(path, (float) gain);
+                }
             }
 
             if(!found) {
@@ -550,7 +550,9 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
 
                         //send to the controller
                         path = "/controller/track/fader/"+std::to_string((int)i+1);
-                        oscServer.sendToController(path, (float) gain);
+                        if(!midiEvent.fromController){
+                            oscServer.sendToController(path, (float) gain);
+                        }
                         break;
                     }
                 }
@@ -567,7 +569,9 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
 
                         //send to the controller
                         path = "/controller/bus/fader/"+std::to_string((int)i+1);
-                        oscServer.sendToController(path, (float) gain);
+                        if(!midiEvent.fromController){
+                            oscServer.sendToController(path, (float) gain);
+                        }
                         break;
                     }
                 }

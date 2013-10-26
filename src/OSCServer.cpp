@@ -64,7 +64,7 @@ int OSCServer::genericHandler(
 
                 pthread_mutex_unlock(&idMutex);
             }
-            MidiEvent midiEvent(data);
+            MidiEvent midiEvent(data,true);
             //Send it to the jack client to handle send to Ardour
             jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
         }
@@ -100,7 +100,7 @@ int OSCServer::genericHandler(
 
                 pthread_mutex_unlock(&idMutex);
             }
-            MidiEvent midiEvent(data);
+            MidiEvent midiEvent(data,true);
             //Send it to the jack client to handle send to Ardour
             //Send it to the jack client to handle send to Ardour
             jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
@@ -129,7 +129,7 @@ int OSCServer::genericHandler(
         if(controllable == "fader") {
             //build a midi event from the fader value and track number
             char data[3] = {(char) CC_MASK,MASTER_CC,(char)((int) argv[0]->f)};
-            MidiEvent midiEvent(data);
+            MidiEvent midiEvent(data,true);
             //Send it to the jack client to handle send to Ardour
             jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
         }

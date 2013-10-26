@@ -23,10 +23,17 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 
 class MidiEvent {
 public:
-	MidiEvent(char *inData) {
-		memcpy(data, inData, sizeof(char)*3);
-	}
     char data[3];
+    bool fromController;
+    MidiEvent(char *inData, bool fromCtl=false) {
+        memcpy(data, inData, sizeof(char)*3);
+        fromController = fromCtl;
+    }
+    MidiEvent(){
+        fromController = false;
+        data[0] = 0;
+        data[1] = 0;
+        data[2] = 0;
+    }
 };
-
 #endif /* MIDI_H_ */

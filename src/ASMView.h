@@ -73,14 +73,17 @@ class ASMView: public Gtk::Window {
     //An OSC server
     OSCServer oscServer;
 
+    //Idle function to poll for messages
+    bool idleFunction();
+    //Used by idle function
+    MidiEvent midiEvent;
+
+
     //A ring buffer ptr for the jack client to send us messages
     jack_ringbuffer_t *sceneUpdateBuffer;
 
     //A ring buffer ptr for the controller to request updates
     jack_ringbuffer_t *controllerUpdate;
-
-    //Idle function to poll for messages
-    bool idleFunction();
 
     void sceneUpdateHandler(MidiEvent& midiEvent);
 
