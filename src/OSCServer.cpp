@@ -59,7 +59,7 @@ int OSCServer::genericHandler(
             char data[3];
             if(pthread_mutex_lock(&idMutex) == 0) {
                 data[0] = (char) CC_MASK;
-                data[1] = trackIds[atoi(pathStr.c_str())];
+                data[1] = trackIds[atoi(pathStr.c_str()) - 1];
                 data[2] = (char) ((int) argv[0]->f);
 
                 pthread_mutex_unlock(&idMutex);
@@ -164,7 +164,9 @@ void OSCServer::sendBusBank(int bankNumber) {
 }
 
 void OSCServer::sendToController(std::string &path, float value){
-    lo_send(touchOSC, path.c_str(), "f", value);
+    if(touchOSC!=NULL){
+        lo_send(touchOSC, path.c_str(), "f", value);
+    }
 }
 
 
