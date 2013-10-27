@@ -22,7 +22,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "OSCServer.h"
 
 ASMView::ASMView() :
-    jack(this), oscServer(jack.controllerBuffer), updateReq("",0),
+    jack(this), oscServer(jack.controllerBuffer),
     myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL),
     topBox(Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(Gtk::ORIENTATION_HORIZONTAL, 10),
     bottomBox(Gtk::ORIENTATION_HORIZONTAL, 10),
@@ -278,6 +278,9 @@ void ASMView::on_new_button_clicked() {
         showSceneDetails();
         scrolledWindow.set_sensitive(true);
         scanAvailableSceneFiles();
+
+        oscServer.activate((int)ceil(myScene.tracks.size()/8.0),
+                           (int)ceil(myScene.busses.size()/4.0));
         break;
     }
     case (Gtk::RESPONSE_CANCEL): {
@@ -454,7 +457,7 @@ Scene *ASMView::getScene(){
 bool ASMView::idleFunction() {
 
     //Check if there is anything from the jack client to update the scene with
-   availableRead = jack_ringbuffer_read_space(sceneUpdateBuffer);
+    availableRead = jack_ringbuffer_read_space(sceneUpdateBuffer);
 
     if ( availableRead >= sizeof(MidiEvent) ) {
 
@@ -467,53 +470,50 @@ bool ASMView::idleFunction() {
 
 
 
+
     availableRead = jack_ringbuffer_read_space(controllerUpdate);
-
-
     if ( availableRead >= sizeof(ControllerUpdateEvent) ) {
         //read what the controller wants to be send back
         jack_ringbuffer_read(controllerUpdate,(char*)&updateReq,sizeof(ControllerUpdateEvent));
 
-        //currently reading garbage, probably due to memory leak
-        std::cout << updateReq.what << std::endl;
-
-        if(updateReq.what == "trackBank"){
+        if(strcmp(updateReq.what,"trackBank") == 0){
             unsigned startIndex = updateReq.bankIndex*8;
-            char ids[8];
+            unsigned cnt=1;
             for(unsigned i=startIndex; i<startIndex+8; i++){
                 if(!(i<myScene.tracks.size())){
                     break;
                 }
                 //send to the controller
-                path = "/controller/track/fader/"+std::to_string(myScene.tracks[i].getId());
+                path = "/controller/track/fader/"+std::to_string(cnt++);
                 ids[i] = myScene.tracks[i].getId();
                 oscServer.sendToController(path, (float) myScene.tracks[i].getGain());
             }
             oscServer.setTrackIds(ids);
 
 
-        } else if(updateReq.what == "busBank"){
+        } else if(strcmp(updateReq.what,"busBank") == 0){
             unsigned startIndex = updateReq.bankIndex*4;
-            char ids[4];
+            unsigned cnt=1;
             for(unsigned i=startIndex; i<startIndex+4; i++){
                 if(!(i<myScene.busses.size())){
                     break;
                 }
                 //send to the controller
-                path = "/controller/bus/fader/"+std::to_string(myScene.busses[i].getId());
+                path = "/controller/bus/fader/"+std::to_string(cnt++);
                 ids[i]= myScene.busses[i].getId();
                 oscServer.sendToController(path, (float) myScene.busses[i].getGain());
             }
             oscServer.setBusIds(ids);
-        } else if(updateReq.what == "master"){
-            std::cout << "Init master\n";
+        }
+
+        else if(strcmp(updateReq.what,"master") == 0){
             //send to the controller
             path = "/controller/master/fader";
             oscServer.sendToController(path,(float) myScene.master.getGain());
         }
 
-
     }
+
 
 
     return true;

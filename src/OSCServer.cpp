@@ -6,17 +6,27 @@ OSCServer::OSCServer(jack_ringbuffer_t *cb)
     contacted = false;
     controllerBuffer = cb;
     trackBank = busBank = 0;
-    numTrackBanks = numBusBanks = 100;
+    numTrackBanks = numBusBanks = 1;
 
     pthread_mutex_init(&idMutex, NULL);
 
-    //start a new server on port 3820 will change to config file
-    serverThread = lo_server_thread_new("8000", NULL);
+}
 
-    /* add method that will match any path and args */
-    lo_server_thread_add_method(serverThread, NULL, NULL, staticHandler, static_cast<void*>(this));
+void OSCServer::activate(int numTB, int numBB){
+    numTrackBanks = numTB;
+    numBusBanks = numBB;
 
-    lo_server_thread_start(serverThread);
+    if(!started){
+        //start a new server on port 3820 will change to config file
+        serverThread = lo_server_thread_new("8000", NULL);
+
+        /* add method that will match any path and args */
+        lo_server_thread_add_method(serverThread, NULL, NULL, staticHandler, static_cast<void*>(this));
+
+        lo_server_thread_start(serverThread);
+        started = true;
+    }
+
 }
 
 OSCServer::~OSCServer() {
@@ -95,7 +105,7 @@ int OSCServer::genericHandler(
             char data[3];
             if(pthread_mutex_lock(&idMutex) == 0) {
                 data[0] = (char) CC_MASK;
-                data[1] = busIds[atoi(pathStr.c_str())];
+                data[1] = busIds[atoi(pathStr.c_str())-1];
                 data[2] = (char) ((int) argv[0]->f);
 
                 pthread_mutex_unlock(&idMutex);
@@ -151,21 +161,22 @@ void OSCServer::firstContact(lo_address addr) {
 }
 
 void OSCServer::sendTrackBank(int bankNumber) {
-    //Request an update for the track bank faders
-    ControllerUpdateEvent cu("trackBank",bankNumber);
+    strcpy(cu.what,"trackBank");
+    cu.bankIndex = bankNumber;
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/track/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
 }
 
 void OSCServer::sendBusBank(int bankNumber) {
     //Request an update for the bus bank faders
-    ControllerUpdateEvent cu("busBank",bankNumber);
+    strcpy(cu.what,"busBank");
+    cu.bankIndex = bankNumber;
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/bus/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
 }
 
 void OSCServer::sendMaster(){
-    ControllerUpdateEvent cu("master",0);
+    strcpy(cu.what,"master");
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
 }
 
@@ -198,3 +209,4 @@ void OSCServer::setIds(char *trackData, char *busData){
     setTrackIds(trackData);
     setBusIds(busData);
 }
+

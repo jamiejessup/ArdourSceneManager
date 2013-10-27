@@ -52,6 +52,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <cstdio>
 #include <dirent.h>
+#include <cmath>
 #include "ControllerUpdate.h"
 
 class ASMView: public Gtk::Window {
@@ -79,6 +80,7 @@ class ASMView: public Gtk::Window {
     MidiEvent midiEvent;
     unsigned availableRead;
     ControllerUpdateEvent updateReq;
+    char ids[8];
 
 
     //A ring buffer ptr for the jack client to send us messages

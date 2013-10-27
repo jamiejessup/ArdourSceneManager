@@ -21,8 +21,11 @@
 class OSCServer
 {
     bool contacted;
+    bool started;
     lo_address touchOSC;
     lo_server_thread serverThread;
+
+    ControllerUpdateEvent cu;
 
     void firstContact(lo_address);
     void sendTrackBank(int bankNumber);
@@ -30,6 +33,8 @@ class OSCServer
     void sendMaster();
 
     pthread_mutex_t idMutex;
+
+
 
 
     //Controller specific stuff for banking
@@ -60,6 +65,7 @@ class OSCServer
 public:
     OSCServer(jack_ringbuffer_t *cb);
     ~OSCServer();
+    void activate(int numTB, int numBB);
     void setTrackIds(char *data);
     void setBusIds(char *data);
     void setIds(char *trackData, char *busData);
