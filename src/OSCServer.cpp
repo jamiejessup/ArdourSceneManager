@@ -147,6 +147,7 @@ void OSCServer::firstContact(lo_address addr) {
     touchOSC = lo_address_new(lo_address_get_hostname(addr),"9000");
     sendTrackBank(trackBank);
     sendBusBank(busBank);
+    sendMaster();
 }
 
 void OSCServer::sendTrackBank(int bankNumber) {
@@ -161,6 +162,11 @@ void OSCServer::sendBusBank(int bankNumber) {
     ControllerUpdateEvent cu("busBank",bankNumber);
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/bus/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
+}
+
+void OSCServer::sendMaster(){
+    ControllerUpdateEvent cu("master",0);
+    jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
 }
 
 void OSCServer::sendToController(std::string &path, float value){

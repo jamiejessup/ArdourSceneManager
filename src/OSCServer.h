@@ -27,6 +27,7 @@ class OSCServer
     void firstContact(lo_address);
     void sendTrackBank(int bankNumber);
     void sendBusBank(int bankNumber);
+    void sendMaster();
 
     pthread_mutex_t idMutex;
 

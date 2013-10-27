@@ -77,6 +77,8 @@ class ASMView: public Gtk::Window {
     bool idleFunction();
     //Used by idle function
     MidiEvent midiEvent;
+    unsigned availableRead;
+    ControllerUpdateEvent updateReq;
 
 
     //A ring buffer ptr for the jack client to send us messages
@@ -86,6 +88,9 @@ class ASMView: public Gtk::Window {
     jack_ringbuffer_t *controllerUpdate;
 
     void sceneUpdateHandler(MidiEvent& midiEvent);
+    //Used by the update handler
+    char id, gain, statusByte, channel;
+    std::string path;
 
 	//Scene stuff
 	string sceneFileName;

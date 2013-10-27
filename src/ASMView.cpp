@@ -22,7 +22,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "OSCServer.h"
 
 ASMView::ASMView() :
-    jack(this), oscServer(jack.controllerBuffer),
+    jack(this), oscServer(jack.controllerBuffer), updateReq("",0),
     myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL),
     topBox(Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(Gtk::ORIENTATION_HORIZONTAL, 10),
     bottomBox(Gtk::ORIENTATION_HORIZONTAL, 10),
@@ -454,7 +454,7 @@ Scene *ASMView::getScene(){
 bool ASMView::idleFunction() {
 
     //Check if there is anything from the jack client to update the scene with
-    unsigned availableRead = jack_ringbuffer_read_space(sceneUpdateBuffer);
+   availableRead = jack_ringbuffer_read_space(sceneUpdateBuffer);
 
     if ( availableRead >= sizeof(MidiEvent) ) {
 
@@ -466,17 +466,17 @@ bool ASMView::idleFunction() {
     }
 
 
-    /*
 
     availableRead = jack_ringbuffer_read_space(controllerUpdate);
 
 
     if ( availableRead >= sizeof(ControllerUpdateEvent) ) {
         //read what the controller wants to be send back
-        ControllerUpdateEvent updateReq("",0);
         jack_ringbuffer_read(controllerUpdate,(char*)&updateReq,sizeof(ControllerUpdateEvent));
 
-        std::string path;
+        //currently reading garbage, probably due to memory leak
+        std::cout << updateReq.what << std::endl;
+
         if(updateReq.what == "trackBank"){
             unsigned startIndex = updateReq.bankIndex*8;
             char ids[8];
@@ -505,24 +505,26 @@ bool ASMView::idleFunction() {
                 oscServer.sendToController(path, (float) myScene.busses[i].getGain());
             }
             oscServer.setBusIds(ids);
+        } else if(updateReq.what == "master"){
+            std::cout << "Init master\n";
+            //send to the controller
+            path = "/controller/master/fader";
+            oscServer.sendToController(path,(float) myScene.master.getGain());
         }
 
 
     }
-    */
 
 
     return true;
 }
 
 void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
-    char id = midiEvent.data[1];
-    char gain = midiEvent.data[2];
+    id = midiEvent.data[1];
+    gain = midiEvent.data[2];
 
-    char statusByte = (unsigned char) midiEvent.data[0] >> 4;
-    char channel = midiEvent.data[0] & 0x0F;
-    std::string path;
-
+    statusByte = (unsigned char) midiEvent.data[0] >> 4;
+    channel = midiEvent.data[0] & 0x0F;
     if (statusByte == CC_NIBBLE) {
         if(channel == 0) {
             //This is a message for master, a track, or a bus
