@@ -1,5 +1,7 @@
 High Priority:
 
+- Fix Segfault on Bank
+
 - More controller testing
 
 - Fix misload of sends
