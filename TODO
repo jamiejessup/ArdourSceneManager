@@ -1,9 +1,8 @@
 High Priority:
-- Include from controller flag in MidiEvent flag
 
-- Check if NULL touchOSC address segfaults Program
+- More controller testing
 
-- Init the controller on scene load
+- Fix misload of sends
 
 AFTER THESE READY FOR v0.2!!!
 

@@ -63,6 +63,13 @@ ASMView::ASMView() :
 
     jack.sceneUpdateBuffer = sceneUpdateBuffer;
     oscServer.controllerUpdate = controllerUpdate;
+
+    /* Init the track and bus Ids so the wrong things don't end up being controlled */
+    for(int i = 0; i<8; i++) {
+        ids[i] = 0xFF;
+    }
+    oscServer.setIds(ids,ids);
+
     jack.activate();
 
     saveButton.set_sensitive(false);

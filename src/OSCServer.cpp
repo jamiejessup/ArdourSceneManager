@@ -165,6 +165,10 @@ void OSCServer::sendTrackBank(int bankNumber) {
     cu.bankIndex = bankNumber;
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/track/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
+    for(int i=0; i<8; i++){
+        lo_send(touchOSC,(std::string("/controller/track/label/").append(std::to_string(i+1))).c_str(),"s",
+                (std::string("Track ").append(std::to_string(bankNumber*8+i+1))).c_str());
+    }
 }
 
 void OSCServer::sendBusBank(int bankNumber) {
@@ -173,6 +177,10 @@ void OSCServer::sendBusBank(int bankNumber) {
     cu.bankIndex = bankNumber;
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
     lo_send(touchOSC,"/controller/bus/bank/number","s",std::string(std::to_string(bankNumber+1)).c_str());
+    for(int i=0; i<8; i++){
+        lo_send(touchOSC,(std::string("/controller/bus/label/").append(std::to_string(i+1))).c_str(),"s",
+                (std::string("Track ").append(std::to_string(bankNumber*8+i+1))).c_str());
+    }
 }
 
 void OSCServer::sendMaster(){
