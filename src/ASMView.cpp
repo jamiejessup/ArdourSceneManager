@@ -485,30 +485,29 @@ bool ASMView::idleFunction() {
 
         if(strcmp(updateReq.what,"trackBank") == 0){
             unsigned startIndex = updateReq.bankIndex*8;
-            unsigned cnt=1;
-            for(unsigned i=startIndex; i<startIndex+8; i++){
+            for(unsigned i=0; i<8; i++){
                 if(!(i<myScene.tracks.size())){
                     break;
                 }
                 //send to the controller
-                path = "/controller/track/fader/"+std::to_string(cnt++);
-                ids[i] = myScene.tracks[i].getId();
-                oscServer.sendToController(path, (float) myScene.tracks[i].getGain());
+                path = "/controller/track/fader/"+std::to_string(i+1);
+                ids[i] = myScene.tracks[startIndex].getId();
+                oscServer.sendToController(path, (float) myScene.tracks[startIndex].getGain());
+                startIndex++;
             }
             oscServer.setTrackIds(ids);
 
 
         } else if(strcmp(updateReq.what,"busBank") == 0){
             unsigned startIndex = updateReq.bankIndex*4;
-            unsigned cnt=1;
-            for(unsigned i=startIndex; i<startIndex+4; i++){
+            for(unsigned i=0; i<4; i++){
                 if(!(i<myScene.busses.size())){
                     break;
                 }
                 //send to the controller
-                path = "/controller/bus/fader/"+std::to_string(cnt++);
-                ids[i]= myScene.busses[i].getId();
-                oscServer.sendToController(path, (float) myScene.busses[i].getGain());
+                path = "/controller/bus/fader/"+std::to_string(i+1);
+                ids[i]= myScene.busses[startIndex].getId();
+                oscServer.sendToController(path, (float) myScene.busses[startIndex].getGain());
             }
             oscServer.setBusIds(ids);
         }
