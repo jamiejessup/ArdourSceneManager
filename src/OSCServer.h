@@ -31,8 +31,12 @@ class OSCServer
     void sendTrackBank(int bankNumber);
     void sendBusBank(int bankNumber);
     void sendMaster();
+    void setTrackBank(int tb);
+    void setBusBank(int bb);
 
-    pthread_mutex_t idMutex;
+    pthread_mutex_t idMutex;    
+    pthread_mutex_t trackBankMutex;
+    pthread_mutex_t busBankMutex;
 
 
 
@@ -70,6 +74,8 @@ public:
     void setBusIds(char *data);
     void setIds(char *trackData, char *busData);
     void sendToController(std::string& path, float value);
+    int getTrackBank();
+    int getBusBank();
     //reference for gui thread to send stuff to the controller
     jack_ringbuffer_t *controllerUpdate;
 };

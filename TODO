@@ -1,12 +1,11 @@
 High Priority:
 
-- Fix Segfault on Bank
+- Send to controller on scene change
 
-- More controller testing
-
-- Fix misload of sends
 
 AFTER THESE READY FOR v0.2!!!
+
+- Fix misload of sends
 
 - Include track names in the scene files/controller
 

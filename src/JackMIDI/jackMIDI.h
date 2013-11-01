@@ -63,6 +63,7 @@ public:
     static int staticProcess(jack_nframes_t nframes, void *arg);
     std::vector<MidiEvent> eventVector;
     jack_ringbuffer_t *controllerBuffer;
+    jack_ringbuffer_t *sceneLoadBuffer;
     std::vector<MidiEvent> *getEventVector();
     jack_ringbuffer_t *sceneUpdateBuffer;
 

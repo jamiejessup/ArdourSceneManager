@@ -1,9 +1,0 @@
-argv = ['./waf', 'configure']
-blddir = '/home/jamie/ArdourSceneManager/build'
-commands = {'clean': 0, 'uninstall': 0, 'build': 0, 'check': 0, 'dist': 0, 'distclean': 0, 'distcheck': 0, 'configure': True, 'install': 0}
-cwd = '/home/jamie/ArdourSceneManager'
-environ = {'PWD': '/home/jamie/ArdourSceneManager', 'DISPLAY': ':0', 'COLORTERM': 'gnome-terminal', 'MAIL': '/var/spool/mail/jamie', 'WINDOWID': '31457286', 'TERM': 'xterm', 'DESKTOP_AUTOSTART_ID': '10ce94f0845ac0b6c2138270433027934600000005440001', 'VTE_VERSION': '3409', 'MOZ_PLUGIN_PATH': '/usr/lib/mozilla/plugins', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'XDG_SEAT': 'seat0', 'USER': 'jamie', 'OLDPWD': '/home/jamie', 'XDG_CURRENT_DESKTOP': 'GNOME', 'LOGNAME': 'jamie', 'XDG_SESSION_ID': '1', 'JAVA_HOME': '/usr/lib/jvm/java-7-openjdk/jre', 'SESSION_MANAGER': 'local/jamie-desktop:@/tmp/.ICE-unix/544,unix/jamie-desktop:/tmp/.ICE-unix/544', 'XAUTHORITY': '/home/jamie/.Xauthority', '_': './waf', 'DBUS_SESSION_BUS_ADDRESS': 'unix:abstract=/tmp/dbus-xLkHGADg92,guid=2ab7f04937e6adbd3fb72efa526a64ca', 'XDG_RUNTIME_DIR': '/run/user/1000', 'XDG_VTNR': '1', 'SHELL': '/bin/bash', 'WINDOWPATH': '1', 'HOME': '/home/jamie', 'CLUTTER_DISABLE_XINPUT': '1', 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/core_perl', 'LANG': 'en_US.UTF-8', 'SHLVL': '3'}
-files = []
-hash = 0
-options = {'destdir': '', 'zones': '', 'blddir': '', 'jobs': 8, 'compile_targets': None, 'force': False, 'progress_bar': 0, 'nocache': False, 'keep': False, 'check_cxx_compiler': 'g++ icpc sunc++', 'srcdir': '', 'verbose': 0, 'prefix': '/usr/local/'}
-srcdir = '/home/jamie/ArdourSceneManager'

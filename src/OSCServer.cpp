@@ -9,7 +9,10 @@ OSCServer::OSCServer(jack_ringbuffer_t *cb)
     numTrackBanks = numBusBanks = 1;
 
     pthread_mutex_init(&idMutex, NULL);
+    pthread_mutex_init(&trackBankMutex, NULL);
+    pthread_mutex_init(&busBankMutex, NULL);
 
+    activate(1,1);
 }
 
 void OSCServer::activate(int numTB, int numBB){
@@ -83,13 +86,17 @@ int OSCServer::genericHandler(
             if (argv[0]->f > 0.5){
                 pathStr= pathStr.substr(pathStr.find("/") + 1);
                 if(pathStr == "up"){
-                    if((trackBank+1) < numTrackBanks) {
-                        sendTrackBank(++trackBank);
+                    int tb = getTrackBank();
+                    if((tb+1) < numTrackBanks) {
+                        sendTrackBank(tb+1);
+                        setTrackBank(tb+1);
                     }
                 }
                 else if(pathStr == "down"){
-                    if(trackBank > 0) {
-                        sendTrackBank(--trackBank);
+                    int tb = getTrackBank();
+                    if(tb > 0) {
+                        sendTrackBank(tb-1);
+                        setTrackBank(tb-1);
                     }
                 }
 
@@ -120,13 +127,17 @@ int OSCServer::genericHandler(
             if (argv[0]->f > 0.5){
                 pathStr= pathStr.substr(pathStr.find("/") + 1);
                 if(pathStr == "up"){
-                    if((busBank+1) < numBusBanks) {
-                        sendBusBank(++busBank);
+                    int bb = getBusBank();
+                    if((bb+1) < numBusBanks) {
+                        sendBusBank(bb+1);
+                        setBusBank(bb+1);
                     }
                 }
                 else if(pathStr == "down"){
-                    if(busBank > 0) {
-                        sendBusBank(--busBank);
+                    int bb = getBusBank();
+                    if(bb > 0) {
+                        sendBusBank(bb-1);
+                        setBusBank(bb-1);
                     }
                 }
 
@@ -148,7 +159,6 @@ int OSCServer::genericHandler(
 
     else if (object == "scene") {
     }
-
 
     return 0;
 }
@@ -218,3 +228,34 @@ void OSCServer::setIds(char *trackData, char *busData){
     setBusIds(busData);
 }
 
+void OSCServer::setTrackBank(int tb) {
+    if(pthread_mutex_lock(&trackBankMutex) == 0) {
+        trackBank = tb;
+        pthread_mutex_unlock(&trackBankMutex);
+    }
+}
+
+void OSCServer::setBusBank(int bb){
+    if(pthread_mutex_lock(&busBankMutex) == 0) {
+        busBank = bb;
+        pthread_mutex_unlock(&busBankMutex);
+    }
+}
+
+int OSCServer::getTrackBank(){
+    int tb;
+    if(pthread_mutex_lock(&trackBankMutex) == 0) {
+        tb = trackBank;
+        pthread_mutex_unlock(&trackBankMutex);
+    }
+    return tb;
+}
+
+int OSCServer::getBusBank(){
+    int bb;
+    if(pthread_mutex_lock(&busBankMutex) == 0) {
+        bb = busBank;
+        pthread_mutex_unlock(&busBankMutex);
+    }
+    return bb;
+}

@@ -5,12 +5,11 @@ void Master::sendToArdour(Jack *pJack) {
     data[0] = CC_MASK;
     data[1] = id;
     data[2] = gain;
-    pthread_mutex_lock(&midiMutex);
-    pJack->eventVector.push_back(MidiEvent(data));
-    for(unsigned i = 0; i<sends.size(); i++) {
-        sends[i].sendToArdour(pJack);
-    }
-    pthread_mutex_unlock(&midiMutex);
+
+    MidiEvent midiEvent(data);
+    //Send it to the jack client to handle send to Ardour
+    jack_ringbuffer_write(pJack->sceneLoadBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+
 }
 
 void Master::setMuted(bool mod) {

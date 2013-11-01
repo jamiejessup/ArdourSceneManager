@@ -40,6 +40,17 @@ Jack::Jack(ASMView* mw) : pASMView(mw) {
         std::cout << "Error locking memory!" << std::endl;
     }
 
+    sceneLoadBuffer = jack_ringbuffer_create( 200 * sizeof(MidiEvent));
+
+    // lock the buffer into memory, this is *NOT* realtime safe, do it before
+    // using the buffer!
+    res = jack_ringbuffer_mlock(sceneLoadBuffer);
+
+    // check if we've locked the memory successfully
+    if ( res ) {
+        std::cout << "Error locking memory!" << std::endl;
+    }
+
     inputPort = jack_port_register(client, "midi_in", JACK_DEFAULT_MIDI_TYPE,
                                    JackPortIsInput, 0);
 
@@ -131,17 +142,18 @@ int Jack::process(jack_nframes_t nframes) {
         }
     }
 
+    /*
     //Try and lock the resource of data to be sent, if not next time
     if (pthread_mutex_trylock(&midiMutex) == 0) {
         // go through data to be sent!
         for (unsigned int i = 0; i < nframes; i++) {
             if (eventVector.size() > 0) {
                 MidiEvent midiEvent = eventVector.front();
-                /* Write midi data to the buffer */
+                //Write midi data to the buffer
                 unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
                                                                 0, 3);
 
-                if (buffer == 0) {
+                if (buffer == 0) {controller
                     cout << "Midi write failed -- write buffer == 0" << endl;
                 } else {
                     buffer[0] = midiEvent.data[0];
@@ -155,6 +167,27 @@ int Jack::process(jack_nframes_t nframes) {
         }
         //Give up the resource
         pthread_mutex_unlock(&midiMutex);
+    }
+    */
+
+    availableRead = jack_ringbuffer_read_space(sceneLoadBuffer);
+
+    if ( availableRead >= sizeof(MidiEvent) ) {
+        /* Write midi data to the buffer */
+        unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
+                                                        0, 3);
+
+        if (buffer == 0) {
+            cout << "Midi write failed -- write buffer == 0" << endl;
+        } else {
+            char init[3] ={0};
+            MidiEvent midiEvent(init);
+            jack_ringbuffer_read(sceneLoadBuffer,(char*)&midiEvent,sizeof(MidiEvent));
+
+            buffer[0] = midiEvent.data[0];
+            buffer[1] = midiEvent.data[1];
+            buffer[2] = midiEvent.data[2];
+        }
     }
 
     return 0;

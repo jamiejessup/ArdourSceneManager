@@ -2,6 +2,7 @@
 #define ARDOURCONTROLLABLE_H
 
 #include "../JackMIDI/jackMIDI.h"
+#include <jack/ringbuffer.h>
 
 //Reference to the mutexes
 extern pthread_mutex_t midiMutex;
