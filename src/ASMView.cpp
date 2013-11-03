@@ -636,44 +636,44 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                 }
             }
         }
-    }
 
-    //a CC message on a channel other than 1 is for a send
-    else {
-        // std::cout<< "Got a message on channel" << (int) channel << "For track" <<  (int) id << "\n";
-        //This is a message for a send on master(soon), a track, or a bus
-        bool found = false;
-        if(!found) {
-            for(unsigned int i =0; i<myScene.tracks.size(); i++) {
-                if(id == myScene.tracks[i].getId()) {
-                    if((unsigned) channel <= myScene.tracks[i].sends.size()) {
-                        myScene.tracks[i].sends[channel-1].setGain(gain);
-                        myScene.tracks[i].sends[channel-1].setModified(true);
-                        found =true;
-                        showSceneDetails();
-                        break;
+        //a CC message on a channel other than 1 is for a send
+        else {
+            std::cout<< "Got a message on channel " << (int) channel << " For track " <<  (int) id << "\n";
+            //This is a message for a send on master(soon), a track, or a bus
+            bool found = false;
+            if(!found) {
+                for(unsigned int i =0; i<myScene.tracks.size(); i++) {
+                    if(id == myScene.tracks[i].getId()) {
+                        if((unsigned) channel <= myScene.tracks[i].sends.size()) {
+                            myScene.tracks[i].sends[channel-1].setGain(gain);
+                            myScene.tracks[i].sends[channel-1].setModified(true);
+                            found =true;
+                            showSceneDetails();
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        //Go through the busses
-        if(!found) {
-            for(unsigned int i =0; i<myScene.busses.size(); i++) {
-                if(id == myScene.busses[i].getId()) {
-                    if((unsigned) channel <= myScene.busses[i].sends.size()) {
-                        myScene.busses[i].sends[channel-1].setGain(gain);
-                        myScene.busses[i].sends[channel-1].setModified(true);
-                        found =true;
-                        showSceneDetails();
-                        break;
+            //Go through the busses
+            if(!found) {
+                for(unsigned int i =0; i<myScene.busses.size(); i++) {
+                    if(id == myScene.busses[i].getId()) {
+                        if((unsigned) channel <= myScene.busses[i].sends.size()) {
+                            myScene.busses[i].sends[channel-1].setGain(gain);
+                            myScene.busses[i].sends[channel-1].setModified(true);
+                            found =true;
+                            showSceneDetails();
+                            break;
 
+                        }
                     }
                 }
             }
+
+
         }
-
-
     }
 
     if (statusByte == NOTE_ON_NIBBLE) {

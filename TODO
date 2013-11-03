@@ -1,17 +1,18 @@
 High Priority:
 
-- Send to controller on scene change
-
-
-AFTER THESE READY FOR v0.2!!!
-
-- Fix misload of sends
+THESE FOR 0.2.1
 
 - Include track names in the scene files/controller
 
 - Parse Ardour Session file to determine track solo and mute status
 
-- Write Scene file with boolean values
+- Write Scene file with solo/mute
+
+- Rx/Tx solo/mute to controller
+
+- A configuration dialog with controller IP, ports
+
+- Init the controller from configuration on scene load
 
 
 Low Priority:
@@ -21,10 +22,6 @@ Low Priority:
 - Controller with monitor mix pages (big feature in 0.3)
 
 - Write Scene file with panwidth and and pandirections
-
-- A configuration dialog with controller IP, ports
-
-- Init the controller from configuration on scene load
 
 - Add a list of controllers that all receive updates
 

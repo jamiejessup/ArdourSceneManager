@@ -17,7 +17,10 @@ void Send::sendToArdour(Jack *pJack) {
     data[0] = CC_MASK + id;
     data[1] = (char) trackId;
     data[2] = gain;
-    pthread_mutex_lock(&midiMutex);
-    pJack->eventVector.push_back(MidiEvent(data));
-    pthread_mutex_unlock(&midiMutex);
+
+    MidiEvent midiEvent(data);
+    //Send it to the jack client to handle send to Ardour
+    jack_ringbuffer_write(pJack->sceneLoadBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+
+    std::cout << "Send a send on channel " << (int) id << std::endl;
 }

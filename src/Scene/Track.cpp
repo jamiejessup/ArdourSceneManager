@@ -11,6 +11,11 @@ void Track::sendToArdour(Jack *pJack) {
     //Send it to the jack client to handle send to Ardour
     jack_ringbuffer_write(pJack->sceneLoadBuffer, (char *) &midiEvent,sizeof(MidiEvent));
 
+    //Send our sends too
+    for(unsigned i=0; i<sends.size(); i++){
+        sends[i].sendToArdour(pJack);
+    }
+
 
 }
 

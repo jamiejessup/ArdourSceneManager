@@ -111,7 +111,7 @@ void SceneParser::parseNodes(Scene *destScene, xmlNode * a_node) {
                     Track * track;
                     track = new Track((char) atoi((char*) trackNo),(char) atoi((char*) trackGain));
 
-                    getTrackSends(cur_node->parent,track,atoi((char*) trackNo));
+                    getTrackSends(cur_node,track,atoi((char*) trackNo));
 
                     //Parent's parent is tracks for tracks and busses for busses
                     if(strcmp((char*) cur_node->parent->parent->name, "tracks") == 0) {
@@ -247,7 +247,7 @@ void SceneParser::getTrackSends(xmlNode* a_node, Track * track, int trackId) {
         if (cur_node->type == XML_ELEMENT_NODE) {
             if(strcmp((char*) cur_node->name, "sendNo") == 0
                     && strcmp((char*) cur_node->parent->name, "send") == 0) {
-                //find the track number
+                //find the send number
                 sendNo = xmlGetProp(cur_node, BAD_CAST "value");
                 if (strcmp((char*) cur_node->next->next->name, "gain") == 0) {
                     gain = xmlGetProp(cur_node->next->next, BAD_CAST "value");
@@ -257,6 +257,7 @@ void SceneParser::getTrackSends(xmlNode* a_node, Track * track, int trackId) {
                 Send *send;
                 send = new Send((char)trackId,(char) atoi((char*) sendNo), (char) atoi((char*) gain));
                 track->sends.push_back(*send);
+                std::cout << "Added a send\n";
             }
             getTrackSends(cur_node->children,track,trackId);
         }
