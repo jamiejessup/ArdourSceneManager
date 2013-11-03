@@ -73,7 +73,6 @@ void ArdourSessionParser::parseNodes(xmlNode * a_node, Scene *pScene) {
             /*
              * Check if we are a Processor with parent as a Route
              * (otherwise we could be an aux send)
-             * Aux sends will be implemented later
              * They are processors with processors as parents, the same otherwise
              */
 
@@ -159,14 +158,17 @@ void ArdourSessionParser::getTrackSends(xmlNode* a_node, Track * track, int trac
                     && strcmp((char*) routeNode->parent->name, "Processor") == 0) {
                 if (strcmp((char*) xmlGetProp(routeNode, BAD_CAST "name"), "Amp")
                         == 0) {
-                    //Get the send gain
-                    //Get the gain of the track from the Controllable attribute
-                    property = xmlGetProp(xmlLastElementChild(routeNode),
-                                          BAD_CAST "value");
-                    if (property != NULL) {
-                        //Convert gain to db, what we use internally
-                        gain = absToCC(atof((char*) property));
-                        track->sends.push_back(Send((char)trackId,(char)sendCounter,gain));
+                    //Check that the role property of parent == Aux, otherwise could be something other than a send
+                    if (strcmp((char*) xmlGetProp(routeNode->parent, BAD_CAST "role"), "Aux") == 0) {
+                        //Get the send gain
+                        //Get the gain of the track from the Controllable attribute
+                        property = xmlGetProp(xmlLastElementChild(routeNode),
+                                              BAD_CAST "value");
+                        if (property != NULL) {
+                            //Convert gain to db, what we use internally
+                            gain = absToCC(atof((char*) property));
+                            track->sends.push_back(Send((char)trackId,(char)sendCounter,gain));
+                        }
                     }
                 }
             }
@@ -190,14 +192,16 @@ void ArdourSessionParser::getMasterSends(xmlNode* a_node, Master * master) {
                     && strcmp((char*) routeNode->parent->name, "Processor") == 0) {
                 if (strcmp((char*) xmlGetProp(routeNode, BAD_CAST "name"), "Amp")
                         == 0) {
-                    //Get the send gain
-                    //Get the gain of the track from the Controllable attribute
-                    property = xmlGetProp(xmlLastElementChild(routeNode),
-                                          BAD_CAST "value");
-                    if (property != NULL) {
-                        //Convert gain to db, what we use internally
-                        gain = absToCC(atof((char*) property));
-                        master->sends.push_back(Send((char) 318,(char)sendCounter,gain));
+                    if (strcmp((char*) xmlGetProp(routeNode->parent, BAD_CAST "role"), "Aux") == 0) {
+                        //Get the send gain
+                        //Get the gain of the track from the Controllable attribute
+                        property = xmlGetProp(xmlLastElementChild(routeNode),
+                                              BAD_CAST "value");
+                        if (property != NULL) {
+                            //Convert gain to db, what we use internally
+                            gain = absToCC(atof((char*) property));
+                            master->sends.push_back(Send((char) 318,(char)sendCounter,gain));
+                        }
                     }
                 }
             }

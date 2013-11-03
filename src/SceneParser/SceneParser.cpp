@@ -186,7 +186,7 @@ void SceneParser::saveScene(Scene *sourceScene, string fn) {
         xmlNewProp(gainNode, BAD_CAST "value", BAD_CAST gainStr);
 
         if(sourceScene->tracks[i].sends.size() > 0) {
-            xmlNodePtr sendsGroupNode = xmlNewChild(tracksGroupNode, NULL, BAD_CAST "sends", NULL);
+            xmlNodePtr sendsGroupNode = xmlNewChild(trackNode, NULL, BAD_CAST "sends", NULL);
             //The tracks sends
             for(int j = 0; j < (int) sourceScene->tracks[i].sends.size(); j++) {
                 xmlNodePtr sendNode = xmlNewChild(sendsGroupNode, NULL, BAD_CAST "send", NULL);
