@@ -72,7 +72,7 @@ int OSCServer::genericHandler(
             char data[3];
             if(pthread_mutex_lock(&idMutex) == 0) {
                 data[0] = (char) CC_MASK;
-                data[1] = trackIds[atoi(pathStr.c_str()) + getTrackBank()*8 - 1];
+                data[1] = trackIds[atoi(pathStr.c_str()) - 1];
                 data[2] = (char) ((int) argv[0]->f);
 
                 pthread_mutex_unlock(&idMutex);
@@ -112,7 +112,7 @@ int OSCServer::genericHandler(
             char data[3];
             if(pthread_mutex_lock(&idMutex) == 0) {
                 data[0] = (char) CC_MASK;
-                data[1] = busIds[atoi(pathStr.c_str()) + getTrackBank()*8 - 1];
+                data[1] = busIds[atoi(pathStr.c_str()) - 1];
                 data[2] = (char) ((int) argv[0]->f);
 
                 pthread_mutex_unlock(&idMutex);
