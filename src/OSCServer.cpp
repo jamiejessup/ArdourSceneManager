@@ -129,15 +129,15 @@ int OSCServer::genericHandler(
                 if(pathStr == "up"){
                     int bb = getBusBank();
                     if((bb+1) < numBusBanks) {
-                        sendBusBank(bb+1);
                         setBusBank(bb+1);
+                        sendBusBank(bb+1);
                     }
                 }
                 else if(pathStr == "down"){
                     int bb = getBusBank();
                     if(bb > 0) {
-                        sendBusBank(bb-1);
                         setBusBank(bb-1);
+                        sendBusBank(bb-1);
                     }
                 }
 
