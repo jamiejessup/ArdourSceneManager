@@ -1,7 +1,10 @@
+#include "ASMView.h"
 #include "OSCServer.h"
 
-OSCServer::OSCServer(jack_ringbuffer_t *cb)
+OSCServer::OSCServer(jack_ringbuffer_t *cb, ASMView* ui)
 {
+    pASMView = ui;
+
     touchOSC = NULL;
     contacted = false;
     controllerBuffer = cb;
@@ -47,6 +50,8 @@ int OSCServer::genericHandler(
         const char *path, const char *types,
         lo_arg **argv, int argc, void *data)
 {
+    UNUSED(argc); UNUSED(types);
+
     if(!contacted) {
         firstContact(lo_message_get_source((lo_message)data));
         contacted = true;
@@ -79,7 +84,9 @@ int OSCServer::genericHandler(
             }
             MidiEvent midiEvent(data,true);
             //Send it to the jack client to handle send to Ardour
-            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            if(!((unsigned char)data[1] == 0xFF)){
+                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            }
         }
 
         if(controllable == "bank") {
@@ -120,7 +127,9 @@ int OSCServer::genericHandler(
             MidiEvent midiEvent(data,true);
             //Send it to the jack client to handle send to Ardour
             //Send it to the jack client to handle send to Ardour
-            jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            if(!((unsigned char)data[1] == 0xFF)){
+                jack_ringbuffer_write(controllerBuffer, (char *) &midiEvent,sizeof(MidiEvent));
+            }
         }
 
         if(controllable == "bank") {
@@ -179,6 +188,9 @@ void OSCServer::sendTrackBank(int bankNumber) {
         lo_send(touchOSC,(std::string("/controller/track/label/").append(std::to_string(i+1))).c_str(),"s",
                 (std::string("Track ").append(std::to_string(bankNumber*8+i+1))).c_str());
     }
+
+    //let the GUI know there is work to do
+    pASMView->scene_access_signal();
 }
 
 void OSCServer::sendBusBank(int bankNumber) {
@@ -191,11 +203,15 @@ void OSCServer::sendBusBank(int bankNumber) {
         lo_send(touchOSC,(std::string("/controller/bus/label/").append(std::to_string(i+1))).c_str(),"s",
                 (std::string("Track ").append(std::to_string(bankNumber*8+i+1))).c_str());
     }
+    //let the GUI know there is work to do
+    pASMView->scene_access_signal();
 }
 
 void OSCServer::sendMaster(){
     strcpy(cu.what,"master");
     jack_ringbuffer_write(controllerUpdate,(char *) &cu, sizeof(ControllerUpdateEvent));
+    //let the GUI know there is work to do
+    pASMView->scene_access_signal();
 }
 
 void OSCServer::sendToController(std::string &path, float value){

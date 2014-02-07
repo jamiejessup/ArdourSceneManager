@@ -22,7 +22,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "OSCServer.h"
 
 ASMView::ASMView() :
-    jack(this), oscServer(jack.controllerBuffer),
+    jack(this), oscServer(jack.controllerBuffer,this),
     myScene(&jack), topLevelBox(Gtk::ORIENTATION_VERTICAL),
     topBox(Gtk::ORIENTATION_HORIZONTAL, 10), middleBox(Gtk::ORIENTATION_HORIZONTAL, 10),
     bottomBox(Gtk::ORIENTATION_HORIZONTAL, 10),
@@ -76,7 +76,10 @@ ASMView::ASMView() :
     loadButton.set_sensitive(false);
     removeButton.set_sensitive(false);
 
-    Glib::signal_idle().connect( sigc::mem_fun(*this, &ASMView::idleFunction) );
+    //connect the signal
+    scene_accesss_conn = scene_access_signal.connect(sigc::mem_fun(*this, &ASMView::scene_access_fn));
+
+    //wGlib::signal_idle().connect( sigc::mem_fun(*this, &ASMView::idleFunction) );
 
     // Set title and border of the window
     set_title("Ardour Scene Manager");
@@ -186,6 +189,9 @@ ASMView::ASMView() :
             treeView.get_selection();
     refTreeSelection->signal_changed().connect(
                 sigc::mem_fun(*this, &ASMView::on_scene_file_selection_changed));
+
+    //Connect the idle function
+    Glib::signal_idle().connect( sigc::mem_fun(*this, &ASMView::showSceneDetails) );
 
     // Show all children of the window
     show_all_children();
@@ -352,28 +358,19 @@ void ASMView::on_remove_button_clicked() {
 
 }
 
-void ASMView::showSceneDetails() {
-    char num[5];
-    char updated[5];
-    //get num of tracks
-    sprintf(num, "%d",
-            (int) myScene.tracks.size());
-    numTracksLabel.set_text(num);
+bool ASMView::showSceneDetails() {
+    numTracksLabel.set_text(std::to_string(myScene.tracks.size()));
+    /*Always a master bus*/
+    numBussesLabel.set_text(std::to_string(myScene.busses.size() +1));
 
-    //get num of busses
-    sprintf(num, "%d", (int) myScene.busses.size() +1 /*Always a master bus*/);
-    numBussesLabel.set_text(num);
-    //Get the number of updated tracks
-    sprintf(updated, "%d", myScene.getUpdatedTracks());
-    updatedTracksLabel.set_text(updated);
-
+    updatedTracksLabel.set_text(std::to_string(myScene.getUpdatedTracks()));
     //get num of updated busses
-    sprintf(updated, "%d", myScene.getUpdatedBusses());
-    updatedBussesLabel.set_text(updated);
-
+    updatedBussesLabel.set_text(std::to_string(myScene.getUpdatedBusses()));
 
     nameEntry.set_text(myScene.getName());
+    usleep(10000);
 
+    return true;
 }
 
 void ASMView::scanAvailableSceneFiles() {
@@ -502,7 +499,8 @@ Scene *ASMView::getScene(){
     return &myScene;
 }
 
-bool ASMView::idleFunction() {
+void ASMView::scene_access_fn() {
+
 
     //Check if there is anything from the jack client to update the scene with
     availableRead = jack_ringbuffer_read_space(sceneUpdateBuffer);
@@ -515,7 +513,6 @@ bool ASMView::idleFunction() {
         sceneUpdateHandler(midiEvent);
 
     }
-
 
 
 
@@ -571,12 +568,12 @@ bool ASMView::idleFunction() {
 
     }
 
-
-
-    return true;
 }
 
+
+
 void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
+
     id = midiEvent.data[1];
     gain = midiEvent.data[2];
 
@@ -591,7 +588,7 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                 myScene.master.setGain(gain);
                 myScene.master.setModified(true);
                 found = true;
-                showSceneDetails();
+                //showSceneDetails();
                 path = "/controller/master/fader";
                 //send to the controller
                 if(!midiEvent.fromController){
@@ -605,7 +602,7 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                         myScene.tracks[i].setGain(gain);
                         myScene.tracks[i].setModified(true);
                         found = true;
-                        showSceneDetails();
+                        //showSceneDetails();
 
                         //send to the controller
                         path = "/controller/track/fader/"+std::to_string((int)i+1);
@@ -624,7 +621,7 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                         myScene.busses[i].setGain(gain);
                         myScene.busses[i].setModified(true);
                         found = true;
-                        showSceneDetails();
+                        //showSceneDetails();
 
                         //send to the controller
                         path = "/controller/bus/fader/"+std::to_string((int)i+1);
@@ -636,6 +633,7 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
                 }
             }
         }
+        /*
 
         //a CC message on a channel other than 1 is for a send
         else {
@@ -674,8 +672,10 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
 
 
         }
+        */
     }
 
+    /*
     if (statusByte == NOTE_ON_NIBBLE) {
         if (channel == 0) {
             //mute a track, or bus
@@ -809,6 +809,8 @@ void ASMView::sceneUpdateHandler(MidiEvent &midiEvent){
             }
         }
     }
+
+    */
 
 
 

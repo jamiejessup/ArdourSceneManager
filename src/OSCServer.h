@@ -12,11 +12,15 @@
 #include "ControllerUpdate.h"
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
+#include <sigc++/sigc++.h>
 
 #define CC_MASK 0b10110000
 #define CC_NIBBLE 0b1011
 #define MASTER_CC 119
 
+#define UNUSED(x) (void)(x)
+
+class ASMView;
 
 class OSCServer
 {
@@ -39,8 +43,6 @@ class OSCServer
     pthread_mutex_t busBankMutex;
 
 
-
-
     //Controller specific stuff for banking
     int trackBank;
     int busBank;
@@ -49,6 +51,7 @@ class OSCServer
     char trackIds[8];
     char busIds[4];
 
+    ASMView *pASMView;
 
     //reference to jack_ring_buffer to send data from Ardour to the controller
     jack_ringbuffer_t *controllerBuffer;
@@ -67,7 +70,7 @@ class OSCServer
             int argc, void *data, void *user_data);
 
 public:
-    OSCServer(jack_ringbuffer_t *cb);
+    OSCServer(jack_ringbuffer_t *cb, ASMView *ui);
     ~OSCServer();
     void activate(int numTB, int numBB);
     void setTrackIds(char *data);

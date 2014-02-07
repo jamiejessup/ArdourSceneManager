@@ -112,67 +112,50 @@ int Jack::process(jack_nframes_t nframes) {
             //Write it to the update ring buffer to be handled by the GUI thread
             MidiEvent midiEvent((char*)in_event.buffer);
             jack_ringbuffer_write(sceneUpdateBuffer,(char*) &midiEvent, sizeof(MidiEvent));
+            //let the GUI know there is work to do
+            pASMView->scene_access_signal();
 
         }
     }
 
     //Check if there is anything from the controller to send to JACK
     // check if there's anything to read
-    unsigned availableRead = jack_ringbuffer_read_space(controllerBuffer);
+    unsigned available_read = jack_ringbuffer_read_space(controllerBuffer);
 
-    if ( availableRead >= sizeof(MidiEvent) ) {
+    if ( available_read >= sizeof(MidiEvent) ) {
 
-        /* Write midi data to the buffer */
-        unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
-                                                        0, 3);
+        unsigned events = available_read/sizeof(MidiEvent);
 
-        if (buffer == 0) {
-            cout << "Midi write failed -- write buffer == 0" << endl;
-        } else {
-            char init[3] ={0};
-            MidiEvent midiEvent(init);
-            jack_ringbuffer_read(controllerBuffer,(char*)&midiEvent,sizeof(MidiEvent));
+        for(unsigned i = 0; i<events; i++){
 
-            buffer[0] = midiEvent.data[0];
-            buffer[1] = midiEvent.data[1];
-            buffer[2] = midiEvent.data[2];
+            /* Write midi data to the buffer */
+            unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
+                                                            0, 3);
 
-            //also send this to the update handler
-            jack_ringbuffer_write(sceneUpdateBuffer,(char*) &midiEvent,sizeof(MidiEvent));
-        }
-    }
 
-    /*
-    //Try and lock the resource of data to be sent, if not next time
-    if (pthread_mutex_trylock(&midiMutex) == 0) {
-        // go through data to be sent!
-        for (unsigned int i = 0; i < nframes; i++) {
-            if (eventVector.size() > 0) {
-                MidiEvent midiEvent = eventVector.front();
-                //Write midi data to the buffer
-                unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
-                                                                0, 3);
+            if (buffer == 0) {
+                cout << "Midi write failed -- write buffer == 0" << endl;
+            } else {
+                char init[3] ={0};
+                MidiEvent midiEvent(init);
+                jack_ringbuffer_read(controllerBuffer,(char*)&midiEvent,sizeof(MidiEvent));
 
-                if (buffer == 0) {controller
-                    cout << "Midi write failed -- write buffer == 0" << endl;
-                } else {
-                    buffer[0] = midiEvent.data[0];
-                    buffer[1] = midiEvent.data[1];
-                    buffer[2] = midiEvent.data[2];
-                }
-                //Take the midi event out of the queue to be written
-                eventVector.erase(eventVector.begin());
+                buffer[0] = midiEvent.data[0];
+                buffer[1] = midiEvent.data[1];
+                buffer[2] = midiEvent.data[2];
+
+                //also send this to the update handler
+                jack_ringbuffer_write(sceneUpdateBuffer,(char*) &midiEvent,sizeof(MidiEvent));
+                //let the GUI know there is work to do
+                pASMView->scene_access_signal();
             }
-
         }
-        //Give up the resource
-        pthread_mutex_unlock(&midiMutex);
     }
-    */
 
-    availableRead = jack_ringbuffer_read_space(sceneLoadBuffer);
 
-    if ( availableRead >= sizeof(MidiEvent) ) {
+    available_read = jack_ringbuffer_read_space(sceneLoadBuffer);
+
+    if ( available_read >= sizeof(MidiEvent) ) {
         /* Write midi data to the buffer */
         unsigned char* buffer = jack_midi_event_reserve(outputPortBuf,
                                                         0, 3);

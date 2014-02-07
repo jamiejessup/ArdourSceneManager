@@ -28,6 +28,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #define MASTER_CC2 118
 
 #include <gtkmm/grid.h>
+#include <gtkmm/button.h>
 #include <gtkmm/box.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/window.h>
@@ -41,6 +42,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/treemodel.h>
+#include <gtkmm/treeviewcolumn.h>
 #include <gtkmm/stock.h>
 #include <glibmm/main.h>
 #include "Scene/Scene.h"
@@ -49,7 +51,7 @@ along with Ardour Scene Manager. If not, see <http://www.gnu.org/licenses/>.
 #include "JackMIDI/jackMIDI.h"
 #include "OSCServer.h"
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <cstdio>
 #include <dirent.h>
 #include <cmath>
@@ -74,9 +76,9 @@ class ASMView: public Gtk::Window {
     //An OSC server
     OSCServer oscServer;
 
-    //Idle function to poll for messages
-    bool idleFunction();
-    //Used by idle function
+    //calback for operations on the scene
+    void scene_access_fn();
+
     MidiEvent midiEvent;
     unsigned availableRead;
     ControllerUpdateEvent updateReq;
@@ -111,7 +113,6 @@ class ASMView: public Gtk::Window {
 
 	//Child widgets:
 
-
 	//Boxes and organization stuff:
 	Gtk::Box topLevelBox, topBox, middleBox,bottomBox, frameBox;
 	Gtk::Separator seperator;
@@ -138,6 +139,7 @@ class ASMView: public Gtk::Window {
     Gtk::Label updatedBussesLabel;
 	Gtk::Frame sceneFrame;
 
+
 	//Tree model columns:
 	class ModelColumns: public Gtk::TreeModel::ColumnRecord {
 	public:
@@ -159,14 +161,16 @@ class ASMView: public Gtk::Window {
 
 	//Tree view filler
 	void scanAvailableSceneFiles();
+    sigc::connection scene_accesss_conn;
 
 public:
 	ASMView();
 	virtual ~ASMView();
 
 	//Shows scene details
-	void showSceneDetails();
+    bool showSceneDetails();
 	Scene *getScene();
+    sigc::signal<void> scene_access_signal;
 };
 
 #endif //GTKMM_EXAMPLE_RADIOBUTTONS_H
